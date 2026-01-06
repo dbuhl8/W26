@@ -1,0 +1,16 @@
+*.cdf
+*.o
+*.mod
+*.dat
+*.npz
+*.fls
+*.synctex.gz
+*.fdb_latexmk
+*.log
+*.out
+*.aux
+!eta_results.dat
+!safe_nonrotating_stoch_eta.dat
+!safe_nonrotating_steady_eta.dat
+!steady_tavg_eta.dat
+!stoch_tavg_eta.dat
