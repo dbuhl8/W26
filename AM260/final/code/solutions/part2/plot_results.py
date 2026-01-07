@@ -1,9 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-fn_grid = ['grid_rfw_plm_minmod_hll.dat', 'grid_rfw_plm_minmod_roe.dat']
-fn_slug = ['slug_rfw_plm_minmod_hll_tot.dat', 'slug_rfw_plm_minmod_roe_tot.dat']
-sbplt_title = ['PLM + Minmod + Hll', 'PLM + Minmod + ROE']
+pdir = '../../part1_'
+gpre = '/grid_sod_'
+ppre = '/slug_sod_'
+ppath = ['FOG', 'PLM', 'PPM']
+psuf = '.dat'
+fn_grid = [pdir+x+gpre+x+psuf for x in ppath]
+fn_slug = [pdir+x+ppre+x+psuf for x in ppath]
+sbplt_title = ['FOG', 'PLM', 'PPM']
+#fn_grid = ['grid_rfw_plm_minmod_hll.dat', 'grid_rfw_plm_minmod_roe.dat']
+#fn_slug = ['slug_rfw_plm_minmod_hll_tot.dat', 'slug_rfw_plm_minmod_roe_tot.dat']
+#sbplt_title = ['PLM + Minmod + Hll', 'PLM + Minmod + ROE']
 
 fig, ax = plt.subplots()
 
@@ -53,6 +61,6 @@ for i in range(1):
     ax.plot(x, dens[tidx,:], 'ro-', x, vel[tidx,:], 'go-', x, pres[tidx,:], 'bo-')
     ax.set_title(sbplt_title[i])
 
-plt.savefig('part2_sol.png',dpi=800)
+plt.savefig('part1_sol.png',dpi=800)
 
     

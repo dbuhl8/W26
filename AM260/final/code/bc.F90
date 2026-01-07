@@ -3,7 +3,7 @@ module bc
 #include "definition.h"
 
   use grid_data
-  use sim_data, only : sim_bcType
+  use sim_data, only : sim_bcType, so_alpha, so_freq
   implicit none
 
 contains
@@ -12,17 +12,18 @@ contains
     implicit none
     if (sim_bcType == 'outflow') then
        call bc_outflow(gr_V)
-    elseif (sim_bcType == 'reflect') then
+    elseif (sim_bcType == 'reflecting') then
        call bc_reflect(gr_V)
     elseif (sim_bcType == 'periodic') then
+       call bc_periodic(gr_V)
     elseif (sim_bcType == 'user') then
+       call bc_user(gr_V)
 
        ! STUDENTS: PLEASE IMPLEMENT THIS FOR THE SHU-OSHER PROBLEM
        stop
     endif
 
   end subroutine bc_apply
-
 
   subroutine bc_outflow(V)
     implicit none
@@ -40,23 +41,19 @@ contains
     return
   end subroutine bc_outflow
 
-
-
   subroutine bc_reflect(V)
     implicit none
     real, dimension(NUMB_VAR,gr_imax), intent(INOUT) :: V
     integer :: i,k0,k1
 
     do i = 1, gr_ngc
-       !k0 = 2*gr_ngc+1
-       !k1 = gr_iend-gr_ngc
+      k0 = 2*gr_ngc+1
+      k1 = gr_iend-gr_ngc
       k0 = gr_iend
-
        ! on the left GC
-       V(       :,i) = V(       :,k0-i)
-
+       V(:,i) = V(:,k0-i)
        ! on the right GC
-       V(       :,k1+k0-i) = V(         :,k1+i)
+       V(:,k1+k0-i) = V(:,k1+i)
     end do
 
     return
@@ -76,7 +73,7 @@ contains
     return
   end subroutine bc_periodic
 
-  subroutine bc_user(V)
+  subroutine bc_user(V) ! shu osher BC
     implicit none
     real, dimension(NUMB_VAR,gr_imax), intent(INOUT) :: V
     ! STUDENTS: PLEASE IMPLEMENT THIS FOR THE SHU-OSHER PROBLEM
@@ -84,7 +81,7 @@ contains
     V(VELX_VAR,:gr_ngc) = 2.629369
     V(PRES_VAR,:gr_ngc) = 10.33333
 
-    V(DENS_VAR,gr_iend:) = 1 + 0.2*sin(5.0*gr_xCoord(gr_iend:))
+    V(DENS_VAR,gr_iend:) = 1 + so_alpha*sin(so_freq*gr_xCoord(gr_iend:))
     V(VELX_VAR,gr_iend:) = 0.0
     V(PRES_VAR,gr_iend:) = 1.0
     return

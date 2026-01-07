@@ -1,0 +1,41 @@
+# Please put your runtime parameters: 
+# name, and a space, followed by values 
+
+# sim variables
+sim_name 'sod_plm'
+sim_cfl 0.8 
+sim_tmax 0.2
+sim_nStep 100000
+sim_riemann 'hll'
+sim_limiter 'minmod'
+sim_charLimiting .false.
+sim_order 2
+
+# grid variables
+gr_nx 128
+gr_ngc 2
+gr_xbeg 0.0
+gr_xend 1.0
+
+# problem specific physical IC
+sim_shockLoc 0.5
+sim_densL 1.0
+sim_velxL 0
+sim_presL 1
+secondLoc .false.
+sim_densM 1.0
+sim_velxM 0
+sim_presM 0.1
+sim_shockLoc2 0.9
+sim_densR 1.25
+sim_velxR 0
+sim_presR 0.1
+sim_gamma 1.4
+sim_smallPres 1.e-12
+
+# BC type
+sim_bcType 'outflow'
+
+# IO frequency
+sim_ioTfreq 0.01 #real
+sim_ioNfreq 10    #positive integer; zero or negative if not used

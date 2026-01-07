@@ -69,11 +69,11 @@ contains
     
     Flux(DENS_VAR) = U(MOMX_VAR)
     velx = U(MOMX_VAR)/U(DENS_VAR)
-    Flux(MOMX_VAR) = velx*U(MOMX_VAR) + V(PRES_VAR)
     ekin = 0.5*U(DENS_VAR)*velx**2
     eint = max(U(ENER_VAR) - ekin, sim_smallPres)/U(DENS_VAR) !eint=rho*e
     ! get pressure by calling eos
     call eos_cell(U(DENS_VAR),eint,sim_gamma,pres)
+    Flux(MOMX_VAR) = velx*U(MOMX_VAR) + pres
     Flux(ENER_VAR) = velx*(U(ENER_VAR) + pres)
 
   end subroutine cons2flux

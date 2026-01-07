@@ -55,7 +55,7 @@ contains
        reig(PRES_VAR,CTENTROPY) = ke
        
        reig(DENS_VAR,SHOCKRGHT) = 1.
-       reig(VELX_VAR,SHOCKRGHT) = u + a
+       reig(VELX_VAR,SHOCKRGHT) = u + cs
        reig(PRES_VAR,SHOCKRGHT) = ke + cs**2/(gam-1) + cs*u
        reig(:,SHOCKRGHT) = 0.5*rho/cs*reig(:,SHOCKRGHT)
 
@@ -88,7 +88,7 @@ contains
     logical :: conservative
     real, dimension(NSYS_VAR,NUMB_WAVE), intent(OUT) :: leig
 
-    real :: a, u, d, g, ke, hdai, hda
+    real :: u,ke, cs, gam, pres, rho
     
     ! sound speed, and others
     u = V(VELX_VAR)
