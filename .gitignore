@@ -14,3 +14,8 @@
 !safe_nonrotating_steady_eta.dat
 !steady_tavg_eta.dat
 !stoch_tavg_eta.dat
+!AM260/final/code/*.dat
+!AM260/final/code/solutions/part1/*.dat
+!AM260/final/code/solutions/part2/*.dat
+!AM260/final/code/solutions/part3/*.dat
+!AM260/final/code/solutions/part4/*.dat
