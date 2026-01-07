@@ -1,4 +1,4 @@
-subroutine roe(vL,vR,Flux)
+subroutine roe(vR,vL,Flux)
 
 #include "definition.h"  
 
@@ -19,8 +19,8 @@ subroutine roe(vL,vR,Flux)
   integer :: kWaveNum
   
   ! set the initial sum to be zero
-  sigma(DENS_VAR:ENER_VAR) = 0.
-  vec(DENS_VAR:ENER_VAR)   = 0.
+  sigma = 0.
+  vec = 0.
   
   ! we need conservative eigenvectors
   conservative = .true.
@@ -39,14 +39,12 @@ subroutine roe(vL,vR,Flux)
   do kWaveNum = 1, NUMB_WAVE
      ! STUDENTS: PLEASE FINISH THIS ROE SOLVER
      !stop
-    sigma(DENS_VAR:ENER_VAR) = sigma(DENS_VAR:ENER_VAR) + &
-      dot_product(leig(DENS_VAR:ENER_VAR,kWaveNum),&
-        uR(DENS_VAR:ENER_VAR)-uL(DENS_VAR:ENER_VAR))*abs(lambda(kWaveNum))*&
-      reig(DENS_VAR:ENER_VAR,kWaveNum)
+    sigma = sigma + dot_product(leig(:,kWaveNum),uR-uL)*abs(lambda(kWaveNum))&
+      *reig(:,kWaveNum)
   end do
   
   ! numerical flux
-  Flux(DENS_VAR:ENER_VAR) = 0.5*(FL(DENS_VAR:ENER_VAR) + FR(DENS_VAR:ENER_VAR)) - 0.5*sigma
+  Flux = 0.5*(FL + FR) - 0.5*sigma
 
 
   return

@@ -15,18 +15,18 @@ subroutine soln_update(dt)
   !! update conservative vars
   do i = gr_ibeg, gr_iend
      !! first convert prim vars to cons vars
-     call prim2cons(gr_V(DENS_VAR:GAME_VAR,i),gr_U(DENS_VAR:ENER_VAR,i))
+     call prim2cons(gr_V(:,i),gr_U(:,i))
      
      !! let's update
-     gr_U(DENS_VAR:ENER_VAR,i) = gr_U(DENS_VAR:ENER_VAR,i) - &
-          dtx*(gr_flux(DENS_VAR:ENER_VAR,i+1) - gr_flux(DENS_VAR:ENER_VAR,i))
+     gr_U(:,i) = gr_U(:,i) - &
+          dtx*(gr_flux(:,i+1) - gr_flux(:,i))
   end do
 
 
   !! get updated primitive vars from the updated conservative vars
   do i = gr_ibeg, gr_iend
      ! Eos is automatically called inside cons2prim
-     call cons2prim(gr_U(DENS_VAR:ENER_VAR,i),gr_V(DENS_VAR:GAME_VAR,i))
+     call cons2prim(gr_U(:,i),gr_V(:,i))
   end do
   
 

@@ -10,16 +10,16 @@ subroutine soln_getFlux()
 
   if (sim_riemann == 'hll') then
      do i = gr_ibeg, gr_iend+1
-        call hll(gr_vR(DENS_VAR:GAME_VAR,i-1),&
-                 gr_vL(DENS_VAR:GAME_VAR,i  ),&
-                 gr_flux(DENS_VAR:ENER_VAR,i))
+        call hll(gr_vR(:,i-1),&
+                 gr_vL(:,i),&
+                 gr_flux(:,i))
      enddo
 
   elseif (sim_riemann == 'roe') then
      do i = gr_ibeg, gr_iend+1
-        call roe(gr_vR(DENS_VAR:GAME_VAR,i-1),&
-                 gr_vL(DENS_VAR:GAME_VAR,i  ),&
-                 gr_flux(DENS_VAR:ENER_VAR,i))
+        call roe(gr_vR(:,i-1),&
+                 gr_vL(:,i),&
+                 gr_flux(:,i))
      enddo
   endif
 

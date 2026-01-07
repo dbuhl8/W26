@@ -1,0 +1,414 @@
+\documentclass{article}
+
+\usepackage{graphicx} % Required for inserting images
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry} \usepackage{amsmath}
+\usepackage{amsthm} %proof environment
+\usepackage{amsthm} %proof environment
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{enumitem} %nice lists
+\usepackage{verbatim} %useful for something 
+\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{blindtext} % I have no idea what this is 
+\usepackage{caption}  % need this for unnumbered captions/figures
+\usepackage{natbib}
+\usepackage{appendix}
+\usepackage{tikz}
+\usepackage{hyperref}
+
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+
+\titleformat{\section}{\bfseries\Large}{Problem \thesection:}{5pt}{}
+
+\begin{document}
+
+\title{AM 260: Computational Fluid Dynamics Final}
+\author{Dante Buhl}
+
+\newcommand{\wrms}{w\_{\text{rms}}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\tb}[1]{\textbf{#1}}
+\newcommand{\bmp}[1]{\begin{minipage}{#1\textwidth}}
+\newcommand{\emp}{\end{minipage}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\Bino}{\text{Bino}}
+\newcommand{\Norm}{\mathcal{N}}
+\newcommand{\erf}{\text{erf}}
+%\newcommand{\K}{\bs{\mathrm{K}}}
+\newcommand{\m}{\bs{\mu}\_*}
+\newcommand{\s}{\bs{\Sigma}\_*}
+\newcommand{\dt}{\Delta t}
+\newcommand{\dx}{\Delta x}
+\newcommand{\tr}[1]{\text{Tr}(#1)}
+\newcommand{\Tr}[1]{\text{Tr}(#1)}
+\newcommand{\Div}{\nabla \cdot}
+\renewcommand{\div}{\nabla \cdot}
+\newcommand{\Curl}{\nabla \times}
+\newcommand{\Grad}{\nabla}
+\newcommand{\grad}{\nabla}
+\newcommand{\grads}{\nabla\_s}
+\newcommand{\gradf}{\nabla\_f}
+\newcommand{\xs}{x\_s}
+\newcommand{\x}{\bs{x}}
+\newcommand{\xf}{x\_f}
+\newcommand{\ts}{t\_s}
+\newcommand{\tf}{t\_f}
+\newcommand{\pt}{\partial t}
+\newcommand{\pz}{\partial z}
+\newcommand{\uvec}{\bs{u}}
+\newcommand{\bvec}{\bs{B}}
+\newcommand{\nvec}{\hat{\bs{n}}}
+\newcommand{\tu}{\tilde{\uvec}}
+\newcommand{\B}{\bs{B}}
+\newcommand{\A}{\bs{A}}
+\newcommand{\jvec}{\bs{j}}
+\newcommand{\F}{\bs{F}}
+\newcommand{\T}{\tilde{T}}
+\newcommand{\ez}{\bs{e}\_z}
+\newcommand{\ex}{\bs{e}\_x}
+\newcommand{\ey}{\bs{e}\_y}
+\newcommand{\eo}{\bs{e}\_{\bs{\Omega}}}
+\newcommand{\ppt}[1]{\frac{\partial #1}{\partial t}}
+\newcommand{\pp}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pptwo}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+\newcommand{\ddtwo}[2]{\frac{d^2 #1}{d #2^2}}
+\newcommand{\DDt}[1]{\frac{D #1}{D t}}
+\newcommand{\ppts}[1]{\frac{\partial #1}{\partial t\_s}}
+\newcommand{\pptf}[1]{\frac{\partial #1}{\partial t\_f}}
+\newcommand{\ppz}[1]{\frac{\partial #1}{\partial z}}
+\newcommand{\ddz}[1]{\frac{d #1}{d z}}
+\newcommand{\ppzetas}[1]{\frac{\partial^2 #1}{\partial \zeta^2}}
+\newcommand{\ppzs}[1]{\frac{\partial #1}{\partial z\_s}}
+\newcommand{\ppzf}[1]{\frac{\partial #1}{\partial z\_f}}
+\newcommand{\ppx}[1]{\frac{\partial #1}{\partial x}}
+\newcommand{\ddx}[1]{\frac{d #1}{d x}}
+\newcommand{\ppxi}[1]{\frac{\partial #1}{\partial x\_i}}
+\newcommand{\ppxj}[1]{\frac{\partial #1}{\partial x\_j}}
+\newcommand{\ppy}[1]{\frac{\partial #1}{\partial y}}
+\newcommand{\ppzeta}[1]{\frac{\partial #1}{\partial \zeta}}
+\renewcommand{\k}{\bs{k}}
+\newcommand{\real}[1]{\text{Re}\left[#1\right]}
+
+
+\maketitle 
+% This line removes the automatic indentation on new paragraphs
+\setlength{\parindent}{0pt}
+
+Assignment Description: 
+\begin{enumerate}
+    \item Sod Shock tube, $N_x = 128$, HLL, $t_f = 0.2$, with FOG and
+    PLM+minmod and PPM+minmod
+    \item Rarefraction, $N_x = 128$, PLM with minmod, $t_f = 0.15$ for HLL and
+    ROE
+    \item Blast2, $N_x = 128$ with PPM and ROE, $t = 0.038$ for MC,Minmod,VL,
+    compare to FOG + ROE
+    \item Shu-Osher PLM/MC/HLL $N_x = 32,64,128$ $t_f = 1.8$, compare to FOG+HLL
+    \item Shu-Osher w PLM/vanLeer/Roe, $N_x = 128$ with CFL $=
+    0.2,0.4,0.6,0.8,1.0,1.4$, $t_f = 1.8$. 
+\end{enumerate}
+
+Notes on Dongwooks Code:
+
+General Notes on code structure: 
+\begin{itemize}
+    \item the V variables in the code (gr\_V) is responsible for the primitive variables at any time, i.e. the actual values at those points. 
+    \item the gr\_xCoords array stores the cell centered discretization (Page 2 of the assignment PDF, eq. 5)
+    \item the sim\_shockLoc variable is the shock interface for the IC, and may be updated later in the code (relevant for the IC)
+    \item the U variables in the code (gr\_U) is responsible for the conservative variables at any time. 
+    \item the length of V at any given time is stored in NUMB\_VAR, while the length of U at any given time is NSYS\_VAR
+    \item the 'small pressure' variable is the lower bound for the primitive pressure upon evalutation. 
+    \item the sim\_order variables stores the order of the solver, i.e. order 1 is a 1st order solver such as the FOG method. 
+\end{itemize}
+
+
+THINGS TO DO:
+\begin{itemize}
+    \item X write the Average State script
+    \item X primitive right eigenvectors (pg. 130 Lect Note)
+    \item X prim and cons left eigenvector (pg. 130 \& 131 Lect Note)
+    \item X slope limiters (mc \& vanLeers)
+    \item X Characteristic Limiting for PLM (pg. 156 Char Limit)
+    \item X ROE section for PLM 
+    \item X PPM method (pg. 157-162)
+    \item X ROE riemann solver (pg. 140-147)
+    \item X BC for Periodic and Shu-Osher problem
+    \item X DEBUG PPM sovler (need to fix the shapes of several arrays)
+    \item Implement all test cases (X, 2, 3, 4, 5)
+    \item write report (can be very bad as long as code and results are decent)
+\end{itemize}
+driver\_euler1d.f90: the driver file which calls all other files as needed. The file begins by initializing a grid and simulation configuration (specifically with the grid\_init and sim\_init subroutines). This file calls the following subroutines (and subsequent files),
+    calls: 
+\begin{itemize}
+         \item grid\_init
+         \item sim\_init
+         \item io\_writeOutput
+         \item cfl
+         \item soln\_ReconEvoleAvg
+         \item soln\_update
+         \item bc\_apply
+\end{itemize}
+    modules: 
+    \begin{itemize}
+         \item sim\_data.f90
+         \item grid\_data.f90
+         \item io.f90
+         \item bc.f90
+         \item eos.f90
+    \end{itemize}
+
+grid\_init.f90: this file is responsible for creating, allocating, and storring important parameters for the grid discretization. Reads number of interior cells, number of ghost cells, and domain bounds from a file called slug.init. Allocates the following arrays. gr\_U, gr\_V, gr\_W, gr\_VL, gr\_vR, gr\_flux, gr\_eigval, gr\_leigvc, gr\_reigvc. 
+    calls: 
+    \begin{itemize}
+         \item read\_initFileInt
+    \end{itemize}
+    modules:
+    \begin{itemize}
+         \item grid\_data.f90
+         \item read\_initFile.f90
+    \end{itemize}
+
+read\_initFile.f90: a module file specifically designed for reading in relevant simulation data. It has a  subroutine for each specific datatype. Each of these subroutines is designed to parse data from a string similar to a json routine. The data is taken in as a character array and then indexed by a keyword. Then the value at that index is returned. 
+    subroutines: 
+    \begin{itemize}
+        \item read\_initFileInt
+        \item read\_initFileReal
+        \item read\_initFileBool
+        \item read\_initFileChar
+    \end{itemize}
+
+
+
+grid\_data.f90: a grid\_data module, specifically which hosts the initialization of relevant grid discretization arrays (most of which are allocated in the grid\_init.f90 routine). 
+
+sim\_init.f90: an initialization file which reads in relevant simulation data from the slug.init file. Specifically this reads from the slug init file, the order of the simulation, the number of timesteps, the cfl number, the max time, the interval time, the riemann solver, the slope limiter, the 'name', the char limitter, the Left and Right Density/Velocity/Pressure values, specific heat, shock location, 'small pressure', boundary condition type, and frequency of io outputs. 
+    calls: 
+    \begin{itemize}
+         \item read\_initFileInt
+         \item read\_initFileReal
+         \item read\_initFileChar
+         \item read\_initFileBool
+         \item sim\_initBlock
+    \end{itemize}
+    modules: 
+    \begin{itemize}
+         \item sim\_data.f90
+         \item read\_initFile.f90
+    \end{itemize}
+
+sim\_initBlock.f90: initializes values into the gr\_V, gr\_xCoord arrays. 
+    calls: 
+    \begin{itemize}
+        \item prim2cons
+    \end{itemize}
+    modules:
+    \begin{itemize}
+        \item sim\_data.f90
+        \item grid\_data.f90
+        \item primconsflux.f90
+    \end{itemize}
+
+sim\_data.f90: a module file responsible for initializing simulation data, mostly for IC, but some is relevant later in the simulation)
+
+primconsflux.f90: A mopdule file responsible for containing subroutines to switch between different data types i.e. primitive, conservative, and flux. Note that the cons2flux routine is not yet written yet. 
+
+    subroutines: 
+    \begin{itemize}
+        \item prim2cons
+        \item cons2prim
+        \item prim2flux
+        \item cons2flux
+    \end{itemize}
+    calls: 
+    \begin{itemize}
+        \item eos\_cell
+    \end{itemize}
+    modules: 
+    \begin{itemize}
+        \item grid\_data.f90
+        \item sim\_data.f90
+        \item eos.f90
+    \end{itemize}
+
+eos.f90: A module file which is responsible for returning the pressure at any given moment from the other primitive vars. eos\_cell assumes that the density, internal energy, and game are already known, while eos\_all computes the pressure from the conservative variables by first computing the primitive values and then computing the pressure. 
+    subroutines: 
+    \begin{itemize}
+        \item eos\_all
+        \item eos\_cell
+    \end{itemize}
+
+io.f90: a module file specifically for subroutines related to IO. Note that the sim\_name variable is responsible for naming the output file, i.e. slug\_'sim\_name'.dat. This subroutine only prints a specific timestep at each call. 
+    subroutines: 
+    \begin{itemize}
+        \item io\_writeOutput
+    \end{itemize}
+
+cfl.f90: a subroutine which returns the computed timestep according to the cfl safety factor computation. It should be noted that it returns dt = SF*dx/maxSpeed. Here maxSpeed is computed using max(v\_x) + cs, where cs is the computed local speed of sound
+    subroutines:
+    \begin{itemize}
+        \item cfl
+    \end{itemize}
+
+soln\_ReconEvoleAvg.f90: a dispatcher routine which calls subsequent reconstruction routines. Also stores left and right states for the conservative variables.
+    calls: 
+    \begin{itemize}
+        \item soln\_reconstruct
+        \item soln\_getFlux
+    \end{itemize}
+    modules: 
+    \begin{itemize}
+        \item grid\_data.f90
+        \item sim\_data.f90
+    \end{itemize}
+
+soln\_reconstruct.f90: another dispatcher routine which calls a subsequent solver FOG/PLM/PPM depending on the 'sim\_order'. 
+    calls: 
+    \begin{itemize}
+        \item soln\_FOG
+        \item soln\_PLM
+        \item soln\_PPM
+    \end{itemize}
+    modules: 
+    \begin{itemize}
+        \item grid\_data.f90
+        \item sim\_data.f90
+    \end{itemize}
+
+soln\_FOG.f90: updates the left and right states (gr\_vL and gr\_vR) according to the FOG method. 
+
+soln\_PLM.f90: updates the left and right states according to the PLM method, note that all primitive vars after besides Density, Velocity, and Pressure are updaterd using the FOG method. Note that two sections of this routine need to be implemented, the characteristic limitting section and the 'ROE' riemann solver. This does not use the conservative eigenvectors.
+    calls:
+    \begin{itemize}
+        \item eigenvalues
+        \item left\_eigenvectors
+        \item right\_eigenvectors
+        \item minmod
+        \item vanLeer
+        \item mc
+    \end{itemize}
+    modules:
+    \begin{itemize}
+        \item grid\_data.f90
+        \item sim\_data.f90
+        \item slopeLimiter.f90
+        \item eigensystem.f90
+    \end{itemize}
+
+slopeLimiter.f90: a module file which contains the subroutines for computing each of the slope limiters used in this assignment. Note that the mc and vanLeer slope limiters are note yet implemented. 
+    subroutines: 
+    \begin{itemize}
+        \item minmod
+        \item mc
+        \item vanLeer
+    \end{itemize}
+
+eigensystem.f90: a module file for the eigen subroutines. Note that the primitive right eigenvector computation is not implemented, nor are the conservative and primitative left eigenvector computations. 
+    subroutines: 
+    \begin{itemize}
+        \item eigenvalues
+        \item left\_eigenvectors
+        \item right\_eigenvectors
+    \end{itemize}
+    modules:
+    \begin{itemize}
+        \item grid\_data.f90
+    \end{itemize}
+
+soln\_PPM.f90: updates the left and right states according to the PPM method (this has not yet been implemented). 
+    calls:
+
+    modules: 
+    \begin{itemize}
+        \item grid\_data.f90
+        \item sim\_data.f90
+        \item slopeLimiter.f90
+        \item eigensystem.f90
+    \end{itemize}
+
+soln\_getFlux.f90: a dispatcher routine which calls either the HLL or ROE routines to obtain the fluxes (gr\_flux) from the primative left and right states. 
+    calls:
+    \begin{itemize}
+        \item hll
+        \item roe
+    \end{itemize}
+    modules: 
+    \begin{itemize}
+        \item grid\_data.f90
+        \item sim\_data.f90
+    \end{itemize}
+
+hll.f90: a subroutine which returns the fluxes computed at each intereior point according to the hll method. 
+    calls: 
+    \begin{itemize}
+        \item prim2flux
+        \item prim2cons
+    \end{itemize}
+    modules: 
+    \begin{itemize}
+        \item grid\_data.f90
+        \item primconsflux.f90
+    \end{itemize}
+
+roe.f90: a subroutine which returns the fluxes computed at each interior point according to the roe method. Note that this is not yet fully implemented. 
+    calls:
+    \begin{itemize}
+        \item averageState
+        \item eigenvalues
+        \item left\_eigenvectors
+        \item right\_eigenvectors
+        \item prim2flux
+        \item prim2cons
+    \end{itemize}
+    modules:
+    \begin{itemize}
+        \item grid\_data.f90
+        \item primconsflux.f90
+        \item eigensystem.f90
+    \end{itemize}
+
+soln\_update.f90: this updates the conservative variables using U(i+1) = U(i) -
+dt/dx(Flux\_R - Flux\_L). Then the primitive vars are updated after this computation. 
+    calls: 
+    \begin{itemize}
+        \item prim2cons
+        \item cons2prim
+    \end{itemize}
+     modules:
+    \begin{itemize}
+        \item grid\_data.f90
+        \item primconsflux.f90
+    \end{itemize}
+
+bc.f90: a module file responsible for all boundary condition subroutines. The
+Shu-Osher BC and Periodic BCs still need to be implemented 
+    subroutines: 
+    \begin{itemize}
+        \item bc\_apply
+        \item bc\_outflow
+        \item bc\_reflect
+        \item bc\_periodic
+        \item bc\_user
+    \end{itemize}
+    modules: 
+    \begin{itemize}
+        \item grid\_data
+        \item sim\_data
+    \end{itemize}
+
+averageState.f90: a subroutine which computes the average of the left and right values
+
+
+\end{document}

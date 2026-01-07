@@ -1,4 +1,4 @@
-subroutine hll(vL,vR,Flux)
+subroutine hll(vR,vL,Flux)
 
 #include "definition.h"  
 

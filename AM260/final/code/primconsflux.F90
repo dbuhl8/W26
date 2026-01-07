@@ -34,12 +34,11 @@ contains
     V(DENS_VAR) = U(DENS_VAR)
     V(VELX_VAR) = U(MOMX_VAR)/U(DENS_VAR)
     ekin = 0.5*V(DENS_VAR)*V(VELX_VAR)**2
-    eint = max(U(ENER_VAR) - ekin, sim_smallPres) !eint=rho*e
-    eint = eint/U(DENS_VAR)
+    eint = max(U(ENER_VAR) - ekin, sim_smallPres)/U(DENS_VAR) !eint=rho*e
+    V(EINT_VAR) = eint
     ! get pressure by calling eos
     call eos_cell(U(DENS_VAR),eint,sim_gamma,pres)
     V(PRES_VAR) = pres
-    V(EINT_VAR) = eint*U(DENS_VAR)
     V(GAMC_VAR) = sim_gamma
     V(GAME_VAR) = sim_gamma
     
@@ -53,16 +52,30 @@ contains
     real :: ekin,eint,ener
     
     Flux(DENS_VAR) = V(DENS_VAR)*V(VELX_VAR)
-    Flux(MOMX_VAR) = Flux(DENS_VAR)*V(VELX_VAR) + V(PRES_VAR)
-    ekin = 0.5*V(VELX_VAR)*V(VELX_VAR)*V(DENS_VAR)
+    Flux(MOMX_VAR) = Flux(DENS_VAR)*V(VELX_VAR)**2 + V(PRES_VAR)
+    ekin = 0.5*V(DENS_VAR)*V(VELX_VAR)**2
     eint = V(PRES_VAR)/(V(GAME_VAR)-1.)
     ener = ekin + eint
     Flux(ENER_VAR) = V(VELX_VAR)*(ener + V(PRES_VAR))
     
   end subroutine prim2flux
 
-  subroutine cons2flux
+  subroutine cons2flux(U,Flux)
     implicit none
+    real, dimension(NSYS_VAR), intent(IN)  :: U
+    real, dimension(NSYS_VAR), intent(OUT) :: Flux
+
+    real :: ekin,eint,ener,pres,velx
+    
+    Flux(DENS_VAR) = U(MOMX_VAR)
+    velx = U(MOMX_VAR)/U(DENS_VAR)
+    Flux(MOMX_VAR) = velx*U(MOMX_VAR) + V(PRES_VAR)
+    ekin = 0.5*U(DENS_VAR)*velx**2
+    eint = max(U(ENER_VAR) - ekin, sim_smallPres)/U(DENS_VAR) !eint=rho*e
+    ! get pressure by calling eos
+    call eos_cell(U(DENS_VAR),eint,sim_gamma,pres)
+    Flux(ENER_VAR) = velx*(U(ENER_VAR) + pres)
+
   end subroutine cons2flux
   
 end module primconsflux

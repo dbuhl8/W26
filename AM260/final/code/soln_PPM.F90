@@ -17,7 +17,7 @@ subroutine soln_PPM(dt)
   real, dimension(NSYS_VAR) :: vecL,vecR,sigL,sigR,sig2L,sig2R,vec2L,vec2R
   integer :: kWaveNum, pt_idx = 64
   real :: lambdaDtDx, delC1, delC2
-  real, dimension(NUMB_VAR)  :: delV,delL,delR,aLR,delLL,delRR,dVL,dVC,dVR
+  real, dimension(NSYS_VAR)  :: delV,delL,delR,aLR,delLL,delRR,dVL,dVC,dVR
   real, dimension(3,3) :: C
   real, dimension(NUMB_WAVE) :: delW
   integer :: nVar
@@ -29,13 +29,16 @@ subroutine soln_PPM(dt)
 
   do i = gr_ibeg-1, gr_iend+1
     C = 0.
-    delLL(DENS_VAR:PRES_VAR) = gr_V(DENS_VAR:PRES_VAR,i-1)-gr_V(DENS_VAR:PRES_VAR,i-2)
-    delL(DENS_VAR:PRES_VAR)  = gr_V(DENS_VAR:PRES_VAR,i  )-gr_V(DENS_VAR:PRES_VAR,i-1)
-    delR(DENS_VAR:PRES_VAR)  = gr_V(DENS_VAR:PRES_VAR,i+1)-gr_V(DENS_VAR:PRES_VAR,i  )
-    delRR(DENS_VAR:PRES_VAR) = gr_V(DENS_VAR:PRES_VAR,i+2)-gr_V(DENS_VAR:PRES_VAR,i+1)
+    delLL(1:3) = gr_V(1:3,i-1) &
+      -gr_V(1:3,i-2)
+    delL(1:3)  = gr_V(1:3,i  ) &
+      -gr_V(1:3,i-1)
+    delR(1:3)  = gr_V(1:3,i+1) &
+      -gr_V(1:3,i  )
+    delRR(1:3) = gr_V(1:3,i+2) &
+      -gr_V(1:3,i+1)
 
     if (i .eq. pt_idx) then
-      
       print *,  " @ i = pt_idx, x = ", gr_xCoord(i)
       print *,  ""
 
@@ -75,10 +78,10 @@ subroutine soln_PPM(dt)
       endif
     end do 
      
-    vecL(DENS_VAR:PRES_VAR) = 0.5*(gr_V(DENS_VAR:PRES_VAR,i-1)+gr_V(DENS_VAR:PRES_VAR,i)) - (1./6)*&
-      (dvC(DENS_VAR:PRES_VAR) - dvL(DENS_VAR:PRES_VAR))
-    vecR(DENS_VAR:PRES_VAR) = 0.5*(gr_V(DENS_VAR:PRES_VAR,i)+gr_V(DENS_VAR:PRES_VAR,i+1)) - (1./6)*&
-      (dvR(DENS_VAR:PRES_VAR) - dvC(DENS_VAR:PRES_VAR))
+    vecL(1:3) = 0.5*(gr_V(1:3,i-1)+gr_V(1:3,i)) - (1./6)*&
+      (dvC(1:3) - dvL(1:3))
+    vecR(1:3) = 0.5*(gr_V(1:3,i)+gr_V(1:3,i+1)) - (1./6)*&
+      (dvR(1:3) - dvC(1:3))
 
     if (i .eq. pt_idx) then
       print *,  " VEC L @ Line 78"
@@ -89,10 +92,10 @@ subroutine soln_PPM(dt)
       print *,  ""
     endif
 
-    C(:,3) = (6./(gr_dx**2))*(0.5*(vecL(DENS_VAR:PRES_VAR)+vecR(DENS_VAR:PRES_VAR))&
-     - gr_V(DENS_VAR:PRES_VAR,i))
-    C(:,2) = (vecR(DENS_VAR:PRES_VAR)-vecL(DENS_VAR:PRES_VAR))/gr_dx
-    C(:,1) = gr_V(DENS_VAR:PRES_VAR,i) - C(:,3)*(gr_dx**2)/12.
+    C(:,3) = (6./(gr_dx**2))*(0.5*(vecL(1:3)+vecR(1:3))&
+     - gr_V(1:3,i))
+    C(:,2) = (vecR(1:3)-vecL(1:3))/gr_dx
+    C(:,1) = gr_V(1:3,i) - C(:,3)*(gr_dx**2)/12.
 
     if (i .eq. pt_idx) then
       print *,  " C @ Line 92"
@@ -111,18 +114,19 @@ subroutine soln_PPM(dt)
         if (-(vecR(nVar)-vecL(nVar))**2 .gt. 6*(vecR(nVar)-vecL(nVar))*&
           (gr_V(nVar,i)-(vecR(nVar)+vecL(nVar))/2)) then
           vecR = 3*gr_V(:,i) - 2*vecL
-          C(:,3) = (6./(gr_dx**2))*(0.5*(vecL(DENS_VAR:PRES_VAR)+vecR(DENS_VAR:PRES_VAR))&
-           - gr_V(DENS_VAR:PRES_VAR,i))
-          C(:,2) = (vecR(DENS_VAR:PRES_VAR)-vecL(DENS_VAR:PRES_VAR))/gr_dx
-          C(:,1) = gr_V(DENS_VAR:PRES_VAR,i) - C(:,3)*(gr_dx**2)/12.
+          C(:,3) = (6./(gr_dx**2))*(0.5*(vecL(1:3)+&
+            vecR(1:3))&
+           - gr_V(1:3,i))
+          C(:,2) = (vecR(1:3)-vecL(1:3))/gr_dx
+          C(:,1) = gr_V(1:3,i) - C(:,3)*(gr_dx**2)/12.
           exit
         elseif ((vecR(nVar)-vecL(nVar))**2 .lt. 6*(vecR(nVar)-vecL(nVar))*&
           (gr_V(nVar,i)-(vecR(nVar)+vecL(nVar))/2)) then
           vecL = 3*gr_V(:,i) - 2*vecR
-          C(:,3) = (6./(gr_dx**2))*(0.5*(vecL(DENS_VAR:PRES_VAR)+vecR(DENS_VAR:PRES_VAR))&
-           - gr_V(DENS_VAR:PRES_VAR,i))
-          C(:,2) = (vecR(DENS_VAR:PRES_VAR)-vecL(DENS_VAR:PRES_VAR))/gr_dx
-          C(:,1) = gr_V(DENS_VAR:PRES_VAR,i) - C(:,3)*(gr_dx**2)/12.
+          C(:,3) = (6./(gr_dx**2))*(0.5*(vecL(1:3)+&
+            vecR(1:3)) - gr_V(1:3,i))
+          C(:,2) = (vecR(1:3)-vecL(1:3))/gr_dx
+          C(:,1) = gr_V(1:3,i) - C(:,3)*(gr_dx**2)/12.
           exit
         endif
       endif
@@ -135,9 +139,9 @@ subroutine soln_PPM(dt)
       print *,  " "
     endif
 
-    call eigenvalues(gr_V(DENS_VAR:GAME_VAR,i),lambda)
-    call left_eigenvectors (gr_V(DENS_VAR:GAME_VAR,i),conservative,leig)
-    call right_eigenvectors(gr_V(DENS_VAR:GAME_VAR,i),conservative,reig)
+    call eigenvalues(gr_V(:,i),lambda)
+    call left_eigenvectors (gr_V(:,i),conservative,leig)
+    call right_eigenvectors(gr_V(:,i),conservative,reig)
 
     ! set the initial sum to be zero
     sigL(DENS_VAR:ENER_VAR) = 0.
@@ -152,38 +156,49 @@ subroutine soln_PPM(dt)
     do kWaveNum = 1, NUMB_WAVE
       ! lambdaDtDx = lambda*dt/dx
       lambdaDtDx = lambda(kWaveNum)*dt/gr_dx
-      delC1 = gr_dx*dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),C(:,2))
-      delC2 = (gr_dx**2)*dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),C(:,3))
-      !if (sim_riemann == 'roe') then
+      delC1 = gr_dx*dot_product(leig(1:3,kWaveNum),C(:,2))
+      delC2 = (gr_dx**2)*dot_product(leig(1:3,kWaveNum),C(:,3))
+      if (sim_riemann == 'roe') then
       ! pretty sure that this solver only uses ROE
         if (lambdaDtDx .gt. 0) then
-          vecR(DENS_VAR:PRES_VAR) = 0.5*(1.0 - lambdaDtDx)*reig(DENS_VAR:PRES_VAR,kWaveNum)*delC1
-          vec2R(DENS_VAR:PRES_VAR) = 0.25*(1.0 - 2*lambdaDtDx+(4./3)*lambdaDtDx**2)*&
-            reig(DENS_VAR:PRES_VAR,kWaveNum)*delC2
-          sigR(DENS_VAR:PRES_VAR) = sigR(DENS_VAR:PRES_VAR) + vecR(DENS_VAR:PRES_VAR)
-          sig2R(DENS_VAR:PRES_VAR) = sig2R(DENS_VAR:PRES_VAR) + vec2R(DENS_VAR:PRES_VAR)
+          vecR(1:3) = 0.5*(1.0 - lambdaDtDx)&
+            *reig(1:3,kWaveNum)*delC1
+          vec2R(1:3) = 0.25*(1.0 - 2*lambdaDtDx+(4./3)&
+            *lambdaDtDx**2)*&
+            reig(1:3,kWaveNum)*delC2
+          sigR(1:3) = sigR(1:3) &
+            + vecR(1:3)
+          sig2R(1:3) = sig2R(1:3) &
+            + vec2R(1:3)
         else
-          vecL(DENS_VAR:PRES_VAR) = 0.5*(-1.0 - lambdaDtDx)*reig(DENS_VAR:PRES_VAR,kWaveNum)*delC1
-          vec2L(DENS_VAR:PRES_VAR) = 0.25*(1.0 + 2*lambdaDtDx+(4./3)*lambdaDtDx**2)*&
-            reig(DENS_VAR:PRES_VAR,kWaveNum)*delC2
-          sigL(DENS_VAR:PRES_VAR) = sigL(DENS_VAR:PRES_VAR) + vecL(DENS_VAR:PRES_VAR)
-          sig2L(DENS_VAR:PRES_VAR) = sig2L(DENS_VAR:PRES_VAR) + vec2L(DENS_VAR:PRES_VAR)
+          vecL(1:3) = 0.5*(-1.0 - lambdaDtDx)*&
+            reig(1:3,kWaveNum)*delC1
+          vec2L(1:3) = 0.25*(1.0 + 2*lambdaDtDx+(4./3)&
+            *lambdaDtDx**2)*reig(1:3,kWaveNum)*delC2
+          sigL(1:3) = sigL(1:3) &
+            + vecL(1:3)
+          sig2L(1:3) = sig2L(1:3) &
+            + vec2L(1:3)
         endif
-      !elseif (sim_riemann == 'hll') then
-        !vecR(DENS_VAR:PRES_VAR) = 0.5*(1.0 - lambdaDtDx)*reig(DENS_VAR:PRES_VAR,kWaveNum)*delW(kWaveNum)
-        !sigR(DENS_VAR:PRES_VAR) = sigR(DENS_VAR:PRES_VAR) + vecR(DENS_VAR:PRES_VAR)
-        !vecL(DENS_VAR:PRES_VAR) = 0.5*(-1.0 - lambdaDtDx)*reig(DENS_VAR:PRES_VAR,kWaveNum)*delW(kWaveNum)
-        !sigL(DENS_VAR:PRES_VAR) = sigL(DENS_VAR:PRES_VAR) + vecL(DENS_VAR:PRES_VAR)
-      !endif
+      elseif (sim_riemann == 'hll') then
+        vecR(1:3) = 0.5*(1.0 - lambdaDtDx)*&
+          reig(1:3,kWaveNum)*delW(kWaveNum)
+        sigR(1:3) = sigR(1:3) &
+          + vecR(1:3)
+        vecL(1:3) = 0.5*(-1.0 - lambdaDtDx)&
+          *reig(1:3,kWaveNum)*delW(kWaveNum)
+        sigL(1:3) = sigL(1:3) &
+          + vecL(1:3)
+      endif
 
       ! Let's make sure we copy all the cell-centered values to left and right states
       ! this will be just FOG
       gr_vL(DENS_VAR:NUMB_VAR,i) = gr_V(DENS_VAR:NUMB_VAR,i)
       gr_vR(DENS_VAR:NUMB_VAR,i) = gr_V(DENS_VAR:NUMB_VAR,i)
       
-      ! Now PLM reconstruction for dens, velx, and pres
-      gr_vL(DENS_VAR:PRES_VAR,i) = gr_V(DENS_VAR:PRES_VAR,i) + sigL(DENS_VAR:PRES_VAR) + sig2L(DENS_VAR:PRES_VAR)
-      gr_vR(DENS_VAR:PRES_VAR,i) = gr_V(DENS_VAR:PRES_VAR,i) + sigR(DENS_VAR:PRES_VAR) + sig2R(DENS_VAR:PRES_VAR)
+      ! Now PPM reconstruction for dens, velx, and pres
+      gr_vL(1:3,i) = gr_V(1:3,i) + sigL(1:3) + sig2L(1:3)
+      gr_vR(1:3,i) = gr_V(1:3,i) + sigR(1:3) + sig2R(1:3)
    end do
  end do
  

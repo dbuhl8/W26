@@ -15,7 +15,7 @@ contains
     real :: a, u
 
     ! sound speed
-    a = sqrt(V(GAMC_VAR)*V(PRES_VAR)/V(DENS_VAR))!;print*,a,V(GAMC_VAR),V(PRES_VAR),V(DENS_VAR)
+    a = sqrt(V(GAMC_VAR)*V(PRES_VAR)/V(DENS_VAR))
     u = V(VELX_VAR)
     
     lambda(SHOCKLEFT) = u - a
@@ -33,49 +33,48 @@ contains
     logical :: conservative
     real, dimension(NSYS_VAR,NUMB_WAVE), intent(OUT) :: reig
 
-    real :: a, u, d, g, ekin, hdai, hda
+    real :: cs, u, rho, pres, gam, ke
     
     ! sound speed, and others
-    a = sqrt(V(GAMC_VAR)*V(PRES_VAR)/V(DENS_VAR))
     u = V(VELX_VAR)
-    d = V(DENS_VAR)
-    g = V(GAMC_VAR) - 1.
-    ekin = 0.5*u**2
-    hdai = 0.5*d/a
-    hda  = 0.5*d*a
+    pres = V(PRES_VAR)
+    rho = V(DENS_VAR)
+    gam = V(GAMC_VAR)
+    cs = sqrt(gam*pres/rho)
+    ke = 0.5*u**2
     
     if (conservative) then
        !! Conservative eigenvector
        reig(DENS_VAR,SHOCKLEFT) = 1.
-       reig(VELX_VAR,SHOCKLEFT) = u - a
-       reig(PRES_VAR,SHOCKLEFT) = ekin + a**2/g - a*u
-       reig(:,SHOCKLEFT) = -hdai*reig(:,SHOCKLEFT)
+       reig(VELX_VAR,SHOCKLEFT) = u - cs
+       reig(PRES_VAR,SHOCKLEFT) = ke + cs**2/(gam-1) - cs*u
+       reig(:,SHOCKLEFT) = -0.5*rho/cs*reig(:,SHOCKLEFT)
 
        reig(DENS_VAR,CTENTROPY) = 1.
        reig(VELX_VAR,CTENTROPY) = u
-       reig(PRES_VAR,CTENTROPY) = ekin
+       reig(PRES_VAR,CTENTROPY) = ke
        
        reig(DENS_VAR,SHOCKRGHT) = 1.
        reig(VELX_VAR,SHOCKRGHT) = u + a
-       reig(PRES_VAR,SHOCKRGHT) = ekin + a**2/g + a*u
-       reig(:,SHOCKRGHT) = hdai*reig(:,SHOCKRGHT)
+       reig(PRES_VAR,SHOCKRGHT) = ke + cs**2/(gam-1) + cs*u
+       reig(:,SHOCKRGHT) = 0.5*rho/cs*reig(:,SHOCKRGHT)
 
   else
   !! Primitive eigenvector
   !! STUDENTS: PLEASE FINISH THIS PRIMITIVE RIGHT EIGEN VECTORS
   !print*,'eigensystem.F90: right eigenvectors'
   !stop
-       reig(DENS_VAR,SHOCKLEFT) = -hdai
+       reig(DENS_VAR,SHOCKLEFT) = -0.5*rho/cs
        reig(VELX_VAR,SHOCKLEFT) = 0.5
-       reig(PRES_VAR,SHOCKLEFT) = -hda
+       reig(PRES_VAR,SHOCKLEFT) = -0.5*rho*cs
 
        reig(DENS_VAR,CTENTROPY) = 1.
        reig(VELX_VAR,CTENTROPY) = 0
        reig(PRES_VAR,CTENTROPY) = 0
        
-       reig(DENS_VAR,SHOCKRGHT) = hdai
+       reig(DENS_VAR,SHOCKRGHT) = 0.5*rho/cs
        reig(VELX_VAR,SHOCKRGHT) = 0.5
-       reig(PRES_VAR,SHOCKRGHT) = hda
+       reig(PRES_VAR,SHOCKRGHT) = 0.5*rho*cs
   endif
 
     
@@ -89,34 +88,33 @@ contains
     logical :: conservative
     real, dimension(NSYS_VAR,NUMB_WAVE), intent(OUT) :: leig
 
-    real :: a, u, d, g, ekin, hdai, hda
+    real :: a, u, d, g, ke, hdai, hda
     
     ! sound speed, and others
-    a = sqrt(V(GAMC_VAR)*V(PRES_VAR)/V(DENS_VAR))
     u = V(VELX_VAR)
-    d = V(DENS_VAR)
-    g = V(GAMC_VAR) - 1.
-    ekin = 0.5*u**2
-    hdai = 0.5*d/a
-    hda  = 0.5*d*a
+    pres = V(PRES_VAR)
+    rho = V(DENS_VAR)
+    gam = V(GAMC_VAR)
+    cs = sqrt(gam*pres/rho)
+    ke = 0.5*u**2
     
     if (conservative) then
        !! Conservative eigenvector
        !! STUDENTS: PLEASE FINISH THIS CONSERVATIVE LEFT EIGEN VECTORS
        !print*,'eigeysystem.F90: left conservative eigenvectors'
        !stop
-       leig(DENS_VAR,SHOCKLEFT) = -ekin - a*u/g
-       leig(VELX_VAR,SHOCKLEFT) = (d/a)*(-ekin + (a**2)/g)
-       leig(PRES_VAR,SHOCKLEFT) = ekin - a*u/g
+       leig(DENS_VAR,SHOCKLEFT) = -ke - cs*u/(gam-1)
+       leig(VELX_VAR,SHOCKLEFT) = u + cs/(gam-1) 
+       leig(PRES_VAR,SHOCKLEFT) = -1.
 
-       leig(DENS_VAR,CTENTROPY) = u + a/g
-       leig(VELX_VAR,CTENTROPY) = u*d/a
-       leig(PRES_VAR,CTENTROPY) = -u + a/g
+       leig(DENS_VAR,CTENTROPY) = (rho/cs)*(-ke + (cs**2)/(gam-1))
+       leig(VELX_VAR,CTENTROPY) = rho*u/cs
+       leig(PRES_VAR,CTENTROPY) = -rho/(gam-1)
        
-       leig(DENS_VAR,SHOCKRGHT) = -1.
-       leig(VELX_VAR,SHOCKRGHT) = -d/a
+       leig(DENS_VAR,SHOCKRGHT) = ke - cs*u/(gam-1)
+       leig(VELX_VAR,SHOCKRGHT) = -u + cs/(gam-1) 
        leig(PRES_VAR,SHOCKRGHT) = 1.
-       leig(:,:) = (g/(d*a))*leig(:,:)
+       !leig(:,:) = ((gam-1)/(rho*cs))*leig(:,:)
        
     else
        !! Primitive eigenvector
@@ -125,15 +123,15 @@ contains
        !stop
        leig(DENS_VAR,SHOCKLEFT) = 0
        leig(VELX_VAR,SHOCKLEFT) = 1.
-       leig(PRES_VAR,SHOCKLEFT) = 0
+       leig(PRES_VAR,SHOCKLEFT) = -1./(rho*cs)
 
        leig(DENS_VAR,CTENTROPY) = 1.
        leig(VELX_VAR,CTENTROPY) = 0
-       leig(PRES_VAR,CTENTROPY) = 1.
+       leig(PRES_VAR,CTENTROPY) = -1./(cs**2)
        
-       leig(DENS_VAR,SHOCKRGHT) = -1./(d*a)
-       leig(VELX_VAR,SHOCKRGHT) = -1./(a**2)
-       leig(PRES_VAR,SHOCKRGHT) = 1./(d*a)
+       leig(DENS_VAR,SHOCKRGHT) = 0
+       leig(VELX_VAR,SHOCKRGHT) = 1.
+       leig(PRES_VAR,SHOCKRGHT) = 1./(rho*cs)
 
     endif
     
