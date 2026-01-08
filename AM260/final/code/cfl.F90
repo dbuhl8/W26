@@ -10,9 +10,11 @@ subroutine cfl(dt)
   integer :: i
   real :: maxSpeed, lambda, cs
 
-  maxSpeed = -100.
+  maxSpeed = 1e-8
   !! update conservative vars
   do i = gr_ibeg, gr_iend
+    ! this needs to be changes to include all wave speeds (pressure, dens,
+    ! and velx)
      cs = sqrt(gr_V(GAMC_VAR,i)*gr_V(PRES_VAR,i)/gr_V(DENS_VAR,i))
      lambda=(abs(gr_V(VELX_VAR,i)) + cs)
      maxSpeed=max(maxSpeed,lambda)
