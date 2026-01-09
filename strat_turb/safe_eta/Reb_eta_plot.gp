@@ -20,7 +20,7 @@ if (png_output){
     set output "plot_eta.png"
 } else if (eps_output) {
     set terminal postscript enh col
-    set output "plot_ltlk_v_eta.eps"
+    set output "plot_ReB_eta.eps"
 }
 set tics font "Roman,22"
 set title font "Roman,30"
@@ -29,7 +29,7 @@ set xlabel font "Roman,25"
 set ylabel font "Roman,25"
 
 if (multiplot_mode) {
-set multiplot layout 3,1 columnsfirst 
+set multiplot layout 2,1 columnsfirst 
 }
 
 # }}}
@@ -110,27 +110,38 @@ LF_Stoch = 2**0.5
 
 # -------------------------------------------------------------
 
-perform_block_1 = 0
+perform_block_1 = 1
 
 # {{{ First Plot
 
 if (perform_block_1) {
 
-set xlabel "Re_{B}" font "Roman,20"
+set xlabel "Re_{G}" font "Roman,20"
 set key top right
 set ylabel "n"
-set title "Effective  Re_b v n"
+#set title "Effective  Re_G v n"
+set format x "10^{%T}"
 set log x
 set yrange [0:1]
 
+set arrow from 1,0 to 1,1 nohead lw 3 dt 2 lc rgb "black"
+set label "Re_G = 1" at 1,0.8 offset 1,0 font "Roman,25"
+
 plot "steady_tavg_eta.dat" \
-   i 0 u ($8**3*$1/$2):20:21 w yerrorbars pt 4 ps 2 lc rgb "dark-violet" title 'Steady Eta',\
-"" i 0 u ($8**3*$1/$2):70:71 w yerrorbars pt 4 ps 2 lc rgb "red" title 'Steady Eta_{Lam}',\
-"" i 0 u ($8**3*$1/$2):80:81 w yerrorbars pt 4 ps 2 lc rgb "blue" title 'Steady Eta_{Turb}',\
+   i 0 u ($16/$2):20:21 w yerrorbars pt 5 ps 2 lc rgb "dark-violet" title 'Steady Eta',\
+"" i 0 u ($16/$2):70:71 w yerrorbars pt 5 ps 1.6 lc rgb "red" title 'Steady Eta_{Lam}',\
+"" i 0 u ($16/$2):80:81 w yerrorbars pt 5 ps 1.6 lc rgb "blue" title 'Steady Eta_{Turb}',\
+"" i 2 u ($16/$2):20:21 w yerrorbars pt 4 ps 2 lc rgb "dark-violet" notitle,\
+"" i 2 u ($16/$2):70:71 w yerrorbars pt 4 ps 1.6 lc rgb "red" notitle,\
+"" i 2 u ($16/$2):80:81 w yerrorbars pt 4 ps 1.6 lc rgb "blue" notitle,\
 "stoch_tavg_eta.dat" \
-   i 0 u ($8**3*$1/$2):20:21 w yerrorbars pt 9 ps 2 lc rgb "dark-violet" title 'Steady Eta',\
-"" i 0 u ($8**3*$1/$2):70:71 w yerrorbars pt 9 ps 2 lc rgb "red" title 'Steady Eta_{Lam}',\
-"" i 0 u ($8**3*$1/$2):80:81 w yerrorbars pt 9 ps 2 lc rgb "blue" title 'Steady Eta_{Turb}',\
+   i 0 u ($16/$2):20:21 w yerrorbars pt 9 ps 2 lc rgb "dark-violet" title 'Steady Eta',\
+"" i 0 u ($16/$2):70:71 w yerrorbars pt 9 ps 1.6 lc rgb "red" title 'Steady Eta_{Lam}',\
+"" i 0 u ($16/$2):80:81 w yerrorbars pt 9 ps 1.6 lc rgb "blue" title 'Steady Eta_{Turb}',\
+"" i 1 u ($16/$2):20:21 w yerrorbars pt 8 ps 2 lc rgb "dark-violet" notitle ,\
+"" i 1 u ($16/$2):70:71 w yerrorbars pt 8 ps 1.6 lc rgb "red" notitle,\
+"" i 1 u ($16/$2):80:81 w yerrorbars pt 8 ps 1.6 lc rgb "blue" notitle,\
+
 
 } # end of block 1 }}}
 
@@ -322,7 +333,7 @@ plot "steady_tavg_eta.dat" \
 
 # -------------------------------------------------------------
 
-perform_block_9 = 1
+perform_block_9 = 0
 
 # {{{ l_T/l_K v eta
 

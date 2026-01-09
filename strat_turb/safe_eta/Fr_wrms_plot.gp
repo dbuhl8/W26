@@ -3,16 +3,16 @@ reset
 
 # {{{ Plot Settings
 
-png_output = 0
-eps_output = 1
+png_output = 1
+eps_output = 0
 multiplot_mode = 0
 
 if (png_output){
     set terminal png size 800,600
-    set output "plot_Fr_wrms.png"
+    set output "wrms_wz_sep_all.png"
 } else if (eps_output) {
     set terminal postscript enh col
-    set output "wturb_average_method_comp.eps"
+    set output "wrms_wz_sep_all.eps"
 }
 set tics font "Roman,22"
 set title font "Roman,35"
@@ -23,8 +23,6 @@ set ylabel font "Roman,30"
 if (multiplot_mode) {
 set multiplot layout 3,1 columnsfirst 
 }
-
-
 
 # }}}
 # {{{file key: 
@@ -99,7 +97,7 @@ set multiplot layout 3,1 columnsfirst
 
 # Plot variables
 # 1: true, 2: false
-plot_Re1000 = 0
+plot_Re1000 = 1
 
 # -------------------------------------------------------------
 
@@ -129,7 +127,7 @@ plot "steady_tavg_eta.dat" \
 
 # -------------------------------------------------------------
 
-perform_block_2 = 0
+perform_block_2 = 1
 
 # {{{ Second Plot - set perform_block_2 to 1 to run this block
 
@@ -137,27 +135,30 @@ perform_block_2 = 0
 if (perform_block_2){
 
 set xlabel "Fr_{eff}^{-1}"
-set key bottom right
+set key bottom left
 set ylabel "w_{rms}/u_{h,rms}"
-set title "Vortz Weighting: Effective Fr_{eff}^{-1} v w_{rms}"
+set title "Vortz Weighting: Effective Fr_{eff}^{-1} v w_{rms, eff}"
 set log xy
+#set xrange [0.1:10]
 
 if (plot_Re1000) {
 
 plot "steady_tavg_eta.dat" \
-   i 0 u ($2**0.5/$8):($12/$8):($13/$8)   w yerrorbars pt 4 ps 2 lc rgb "dark-violet" title 'Steady: Wrms',\
-"" i 0 u ($2**0.5/$8):($94/$8):($95/$8)   w yerrorbars pt 4 ps 2 lc rgb "red" title '       Wlam',\
-"" i 0 u ($2**0.5/$8):($96/$8):($97/$8)   w yerrorbars pt 4 ps 2 lc rgb "blue" title '       Wturb',\
-"" i 2 u ($2**0.5/$8):($12/$8):($13/$8)   w yerrorbars pt 4 ps 2 lc rgb "black" title 'Steady: Wrms',\
-"" i 2 u ($2**0.5/$8):($94/$8):($95/$8)   w yerrorbars pt 4 ps 2 lc rgb "black" title '       Wlam',\
-"" i 2 u ($2**0.5/$8):($96/$8):($97/$8)   w yerrorbars pt 4 ps 2 lc rgb "black" title '       Wturb',\
+   i 0 u ($2**0.5/$8):($12/$8):($13/$8)   w yerrorbars pt 5 ps 2 lc rgb "dark-violet" title 'Steady: Wrms',\
+"" i 0 u ($2**0.5/$8):($94/$8):($95/$8)   w yerrorbars pt 5 ps 2 lc rgb "red" title '       Wlam',\
+"" i 0 u ($2**0.5/$8):($96/$8):($97/$8)   w yerrorbars pt 5 ps 2 lc rgb "blue" title '       Wturb',\
+"" i 2 u ($2**0.5/$8):($12/$8):($13/$8)   w yerrorbars pt 4 ps 2 lc rgb "dark-violet" notitle,\
+"" i 2 u ($2**0.5/$8):($94/$8):($95/$8)   w yerrorbars pt 4 ps 2 lc rgb "red" notitle,\
+"" i 2 u ($2**0.5/$8):($96/$8):($97/$8)   w yerrorbars pt 4 ps 2 lc rgb "blue" notitle,\
 "stoch_tavg_eta.dat" \
    i 0 u ($2**0.5/$8):($12/$8):($13/$8)   w yerrorbars pt 9 ps 2 lc rgb "dark-violet" title 'Stoch.: Wrms',\
 "" i 0 u ($2**0.5/$8):($94/$8):($95/$8)   w yerrorbars pt 9 ps 2 lc rgb "red" title '       Wlam',\
 "" i 0 u ($2**0.5/$8):($96/$8):($97/$8)   w yerrorbars pt 9 ps 2 lc rgb "blue" title '       Wturb',\
-"" i 0 u ($2**0.5/$8):($12/$8):($13/$8)   w yerrorbars pt 9 ps 2 lc rgb "black" title 'Stoch.: Wrms',\
-"" i 0 u ($2**0.5/$8):($94/$8):($95/$8)   w yerrorbars pt 9 ps 2 lc rgb "black" title '       Wlam',\
-"" i 0 u ($2**0.5/$8):($96/$8):($97/$8)   w yerrorbars pt 9 ps 2 lc rgb "black" title '       Wturb',\
+"" i 1 u ($2**0.5/$8):($12/$8):($13/$8)   w yerrorbars pt 8 ps 2 lc rgb "dark-violet" notitle,\
+"" i 1 u ($2**0.5/$8):($94/$8):($95/$8)   w yerrorbars pt 8 ps 2 lc rgb "red" notitle,\
+"" i 1 u ($2**0.5/$8):($96/$8):($97/$8)   w yerrorbars pt 8 ps 2 lc rgb "black" notitle,\
+[1:8] 0.4*x**(-0.5) w l dt 2 lw 2 lc rgb "blue" title "Fr^{-1/2}",\
+[1:8] 0.4*x**(-1) w l dt 2 lw 2 lc rgb "red" title "Fr^{-1}"
 
 
 
@@ -467,7 +468,7 @@ plot "steady_tavg_eta.dat" \
 
 # -------------------------------------------------------------
 
-perform_block_10 = 1
+perform_block_10 = 0
 
 # {{{ tenth Plot - set perform_block_10 to 1 to run this block
 
