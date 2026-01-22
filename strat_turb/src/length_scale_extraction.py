@@ -42,48 +42,6 @@ header_string = header_string.format('Re','B','Pr', 'Pe', 'BPe', 't',\
     'LH', 'LZ', 'LT', 'LO', 'LE', 'LK',\
     'vlam', 'vturb')
 
-"""
-tavg_header_string = tavg_header_string.format('Re','B','Pr', 'Pe', 'BPe',\
-    'lb','ub','uh_rms','uh_err','vortz_rms', 'vortz err','wrms','wrms err',\
-    'tdisp','tdisp_err', 'mdisp','mdisp_err',\
-    'eta (local)', 'eta (local) err', 'eta (global)','eta (global) err', \
-    'lam wrms', 'lam wrms err',\
-    'lam tdisp','lam tdisp err', 'lam mdisp','lam mdisp err',\
-    'lam eta (local)', 'lam eta (local) err',\
-    'lam eta (global)','lam eta (global) err',\
-    'turb wrms', 'turb wrms err',\
-    'turb tdisp','turb tdisp err', 'turb mdisp', 'turb mdisp err',\
-    'turb eta (local)', 'turb eta (local) err', \
-    'turb eta (global)', 'turb eta (global) err', \
-    'lam_Fr wrms', 'lam_Fr wrms err',\
-    'lam_Fr tdisp', 'lam_Fr tdisp err', 'lam_Fr mdisp', 'lam_Fr mdisp err',\
-    'lam_Fr eta (local)','lam_Fr eta (local) err',\
-    'lam_Fr eta (global)', 'lam_Fr eta (global) err',\
-    'turb_Fr wrms', 'turb_Fr wrms err',\
-    'turb_Fr tdisp', 'turb_Fr tdisp err',\
-    'turb_Fr mdisp', 'turb_Fr mdisp err',\
-    'turb_Fr eta (local)', 'turb_Fr eta (local) err',\
-    'turb_Fr eta (global)', 'turb_Fr eta (global) err',\
-    'lam_Fr_vortz wrms', 'lam_Fr_vortz wrms err', \
-    'lam_Fr_vortz tdisp', 'lam_Fr_vortz tdisp err', \
-    'lam_Fr_vortz mdisp', 'lam_Fr_vortz mdisp err',\
-    'lam_Fr_vortz eta (local)', 'lam_Fr_vortz eta (local) err',\
-    'lam_Fr_vortz eta (global)', 'lam_Fr_vortz eta (global) err',\
-    'turb_Fr_vortz wrms', 'turb_Fr_vortz wrms',\
-    'turb_Fr_vortz tdisp', 'turb_Fr_vortz tdisp',\
-    'turb_Fr_vortz mdisp', 'turb_Fr_vortz mdisp err',\
-    'turb_Fr_vortz eta (local)', 'turb_Fr_vortz eta (local) err',\
-    'turb_Fr_vortz eta (global)', 'turb_Fr_vortz eta (global) err',\
-    'vlam avg','vlam err', 'vturb avg', 'vturb err',\
-    'vlam_Fr avg', 'vlam_Fr err', 'vturb_Fr avg', 'vturb_Fr err',\
-    'vlam_Fr_vortz avg', 'vlam_Fr_vortz err',\
-    'vturb_Fr_vortz avg','vturb_Fr_vortz err',\
-    'lam wrms wght', 'lam wrms wght err', \
-    'turb wrms wght', 'turb wrms wght err',\
-    'lam wrms eff wght', 'lam wrms eff wght',\
-    'turb wrms eff wght', 'turb wrms eff wght')
-"""
-
 io_file = open('length_scale_extraction.dat','w')
 io_file.write(header_string)
 tavg_file.write(tavg_header_string)
@@ -91,7 +49,6 @@ io_file.write('\n')
 tavg_file.write('\n')
 
 index_counter = 0
-
 
 for m, sim_set in enumerate(simulations):
     # loops over each parameter set (i.e. Re = 600, Pe = 60 is one iteration of
