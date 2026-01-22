@@ -13,3 +13,12 @@ h = 1e-5;
 f= @(x) 2*x^x - 7*log(x) - 3;
 fprime= @(x,f) (f(x+h) - f(x-h))/(2*h);
 y = NewtonsMethod(f,fprime,1,1e-8);
+
+
+if a is a root:
+    return a
+else if b is a root: 
+    return b
+else if opposite sign:
+    throw error
+end
