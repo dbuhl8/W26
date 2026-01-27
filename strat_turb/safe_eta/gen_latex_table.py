@@ -63,7 +63,7 @@ W = np.array(W)
 EU = np.array(EU)
 mdisp = np.array(mdisp)
 bdisp = np.array(bdisp)
-idx = np.where(abs(Re - 601) <= 2)[0]
+idx = np.where(abs(Re - 1000) <= 2)[0]
 print(idx)
 Forcing = Forcing[idx]
 Re = Re[idx]
