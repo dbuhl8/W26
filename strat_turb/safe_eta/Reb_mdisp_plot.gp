@@ -3,8 +3,8 @@ reset
 idx = 0
 
 # {{{ Plot Settings 
-png_output = 1
-eps_output = 0
+png_output = 0
+eps_output = 1
 multiplot_mode = 0
 
 if (png_output){
@@ -12,7 +12,7 @@ if (png_output){
     set output "plot_mdisp.png"
 } else if (eps_output) {
     set terminal postscript enh col
-    set output "emergent_Reb_comp.eps"
+    set output "big_L_plot.eps"
 }
 set tics font "Roman,22"
 set title font "Roman,35"
@@ -220,7 +220,7 @@ plot "steady_tavg_eta.dat" \
 
 # -------------------------------------------------------------
 
-perform_block_6 = 1
+perform_block_6 = 0
 
 # {{{ Sixth Plot
 
@@ -246,6 +246,37 @@ plot "steady_tavg_eta.dat" \
 } # end of block 5 }}}
 
 # -------------------------------------------------------------
+
+perform_block_7 = 1
+
+# {{{ Sixth Plot
+
+if (perform_block_7) {
+
+
+set xlabel "Re_G"
+set key top right
+set ylabel "L"
+#set format x "10^{%T}"
+#set format y "10^{%T}"
+set log xy
+
+plot "steady_tavg_eta.dat" \
+   i 0 u ($16/$2):(0.03*$1*$8**3/$16) pt 4 ps 2 lc rgb "black" title 'Steady (Re,Pr) = (600,0.1)',\
+"" i 1 u ($16/$2):(0.03*$1*$8**3/$16) pt 4 ps 2 lc rgb "blue" title 'Steady (Re,Pr) = (600,0.05)',\
+"" i 2 u ($16/$2):(0.03*$1*$8**3/$16) pt 4 ps 2 lc rgb "red" title 'Steady (Re,Pr) = (1000,0.1)',\
+"" i 3 u ($16/$2):(0.03*$1*$8**3/$16) pt 4 ps 2 lc rgb "dark-violet" title 'Steady (Re,Pr) = (300,0.1)',\
+"" i 4 u ($16/$2):(0.03*$1*$8**3/$16) pt 4 ps 2 lc rgb "green" title 'Steady (Re,Pr) = (1000,0.01)',\
+"stoch_tavg_eta.dat" \
+   i 0 u ($16/$2):(0.03*$1*$8**3/$16) pt 9 ps 2 lc rgb "black" title 'Stoch. (Re,Pr) = (600,0.1)',\
+"" i 1 u ($16/$2):(0.03*$1*$8**3/$16) pt 9 ps 2 lc rgb "red" title 'Stoch. (Re,Pr) = (1000,0.1)',\
+"" i 2 u ($16/$2):(0.03*$1*$8**3/$16) pt 9 ps 2 lc rgb "green" title 'Stoch. (Re,Pr) = (300,0.1)',\
+
+
+} # end of block 5 }}}
+
+# -------------------------------------------------------------
+
 
 
 
