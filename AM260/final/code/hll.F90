@@ -29,14 +29,11 @@ subroutine hll(vR,vL,Flux)
 
   ! numerical flux
   if (sL >= 0.) then
-     Flux(DENS_VAR:ENER_VAR) = FL(DENS_VAR:ENER_VAR)
-  elseif ( (sL < 0.) .and. (sR >= 0.) ) then
-     Flux(DENS_VAR:ENER_VAR) = (    sR*FL(DENS_VAR:ENER_VAR) &
-                                   -sL*FR(DENS_VAR:ENER_VAR) &
-                               +sR*sL*(uR(DENS_VAR:ENER_VAR) &
-                                      -uL(DENS_VAR:ENER_VAR)))/(sR-sL)
+     Flux(1:3) = FL(1:3)
+  elseif ( (sL < 0.) .and. (sR > 0.) ) then
+     Flux(1:3) = (sR*FL(1:3)-sL*FR(1:3)+sR*sL*(uR(1:3)-uL(1:3)))/(sR-sL)
   else
-     Flux(DENS_VAR:ENER_VAR) = FR(DENS_VAR:ENER_VAR)
+     Flux(1:3) = FR(1:3)
   endif
 
   return

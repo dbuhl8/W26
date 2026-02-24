@@ -16,7 +16,7 @@ subroutine soln_PLM(dt)
   logical :: conservative
   real, dimension(NSYS_VAR) :: vecL,vecR,sigL,sigR
   integer :: kWaveNum
-  real :: lambdaDtDx
+  real :: lambdaDtDx, ldL, ldR
   real, dimension(NUMB_VAR)  :: delV,delL,delR
   real, dimension(NUMB_WAVE) :: delW
   integer :: nVar
@@ -60,31 +60,38 @@ subroutine soln_PLM(dt)
            ! deltas in primitive vars
            delL(DENS_VAR:PRES_VAR) = gr_V(DENS_VAR:PRES_VAR,i  )-gr_V(DENS_VAR:PRES_VAR,i-1)
            delR(DENS_VAR:PRES_VAR) = gr_V(DENS_VAR:PRES_VAR,i+1)-gr_V(DENS_VAR:PRES_VAR,i  )
+           ldL = dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
+                  delL(DENS_VAR:PRES_VAR))
+           ldR = dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
+                  delR(DENS_VAR:PRES_VAR))
            !do nVar = DENS_VAR,PRES_VAR
            if (sim_limiter == 'minmod') then
+              call minmod(ldL, ldR, delW(kWaveNum))
               !call minmod(delL(nVar),delR(nVar),delV(nVar))
-              call minmod(&
-                dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
-                  delL(DENS_VAR:PRES_VAR)),&
-                dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
-                  delR(DENS_VAR:PRES_VAR)),&
-                delW(kWaveNum))
+              !call minmod(&
+                !dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
+                  !delL(DENS_VAR:PRES_VAR)),&
+                !dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
+                  !delR(DENS_VAR:PRES_VAR)),&
+                !delW(kWaveNum))
            elseif (sim_limiter == 'vanLeer') then
               !call vanLeer(delL(nVar),delR(nVar),delV(nVar))
-              call vanLeer(&
-                dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
-                  delL(DENS_VAR:PRES_VAR)),&
-                dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
-                  delR(DENS_VAR:PRES_VAR)),&
-                delW(kWaveNum))
+              call vanLeer(ldL, ldR, delW(kWaveNum))
+              !call vanLeer(&
+                !dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
+                  !delL(DENS_VAR:PRES_VAR)),&
+                !dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
+                  !delR(DENS_VAR:PRES_VAR)),&
+                !delW(kWaveNum))
            elseif (sim_limiter == 'mc') then
               !call mc(delL(nVar),delR(nVar),delV(nVar))
-              call mc(&
-                dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
-                  delL(DENS_VAR:PRES_VAR)),&
-                dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
-                  delR(DENS_VAR:PRES_VAR)),&
-                delW(kWaveNum))
+              call mc(ldL,ldR,delW(kWaveNum))
+              !call mc(&
+                !dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
+                  !delL(DENS_VAR:PRES_VAR)),&
+                !dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),&
+                  !delR(DENS_VAR:PRES_VAR)),&
+                !delW(kWaveNum))
            endif
            !enddo
            !delW(kWaveNum) = dot_product(leig(DENS_VAR:PRES_VAR,kWaveNum),delV(DENS_VAR:PRES_VAR))
@@ -102,7 +109,6 @@ subroutine soln_PLM(dt)
      vecR(DENS_VAR:ENER_VAR) = 0.
      
      do kWaveNum = 1, NUMB_WAVE
-        ! lambdaDtDx = lambda*dt/dx
         lambdaDtDx = lambda(kWaveNum)*dt/gr_dx
 
         
@@ -111,29 +117,29 @@ subroutine soln_PLM(dt)
            ! STUDENTS: PLEASE FINISH THIS ROE SOLVER CASE
            ! THIS SHOULDN'T BE LONGER THAN THE HLL CASE
            if (lambdaDtDx .gt. 0) then
-             vecR(DENS_VAR:PRES_VAR) = 0.5*(1.0 - lambdaDtDx)*reig(DENS_VAR:PRES_VAR,kWaveNum)*delW(kWaveNum)
-             sigR(DENS_VAR:PRES_VAR) = sigR(DENS_VAR:PRES_VAR) + vecR(DENS_VAR:PRES_VAR)
+             vecR(1:3) = 0.5*(1.0 - lambdaDtDx)*reig(1:3,kWaveNum)*delW(kWaveNum)
+             sigR(1:3) = sigR(1:3) + vecR(1:3)
            else
-             vecL(DENS_VAR:PRES_VAR) = 0.5*(-1.0 - lambdaDtDx)*reig(DENS_VAR:PRES_VAR,kWaveNum)*delW(kWaveNum)
-             sigL(DENS_VAR:PRES_VAR) = sigL(DENS_VAR:PRES_VAR) + vecL(DENS_VAR:PRES_VAR)
+             vecL(1:3) = 0.5*(-1.0 - lambdaDtDx)*reig(1:3,kWaveNum)*delW(kWaveNum)
+             sigL(1:3) = sigL(1:3) + vecL(1:3)
            end if
 
         elseif (sim_riemann == 'hll') then
-              vecR(DENS_VAR:PRES_VAR) = 0.5*(1.0 - lambdaDtDx)*reig(DENS_VAR:PRES_VAR,kWaveNum)*delW(kWaveNum)
-              sigR(DENS_VAR:PRES_VAR) = sigR(DENS_VAR:PRES_VAR) + vecR(DENS_VAR:PRES_VAR)
+              vecR(1:3) = 0.5*(1.0 - lambdaDtDx)*reig(1:3,kWaveNum)*delW(kWaveNum)
+              sigR(1:3) = sigR(1:3) + vecR(1:3)
 
-              vecL(DENS_VAR:PRES_VAR) = 0.5*(-1.0 - lambdaDtDx)*reig(DENS_VAR:PRES_VAR,kWaveNum)*delW(kWaveNum)
-              sigL(DENS_VAR:PRES_VAR) = sigL(DENS_VAR:PRES_VAR) + vecL(DENS_VAR:PRES_VAR)
+              vecL(1:3) = 0.5*(-1.0 - lambdaDtDx)*reig(1:3,kWaveNum)*delW(kWaveNum)
+              sigL(1:3) = sigL(1:3) + vecL(1:3)
         endif
 
         ! Let's make sure we copy all the cell-centered values to left and right states
         ! this will be just FOG
-        gr_vL(DENS_VAR:NUMB_VAR,i) = gr_V(DENS_VAR:NUMB_VAR,i)
-        gr_vR(DENS_VAR:NUMB_VAR,i) = gr_V(DENS_VAR:NUMB_VAR,i)
+        !gr_vL(DENS_VAR:NUMB_VAR,i) = gr_V(DENS_VAR:NUMB_VAR,i)
+        !gr_vR(DENS_VAR:NUMB_VAR,i) = gr_V(DENS_VAR:NUMB_VAR,i)
         
         ! Now PLM reconstruction for dens, velx, and pres
-        gr_vL(DENS_VAR:PRES_VAR,i) = gr_V(DENS_VAR:PRES_VAR,i) + sigL(DENS_VAR:PRES_VAR)
-        gr_vR(DENS_VAR:PRES_VAR,i) = gr_V(DENS_VAR:PRES_VAR,i) + sigR(DENS_VAR:PRES_VAR)
+        gr_vL(1:3,i) = gr_V(1:3,i) + sigL(1:3)
+        gr_vR(1:3,i) = gr_V(1:3,i) + sigR(1:3)
      end do
   end do
   

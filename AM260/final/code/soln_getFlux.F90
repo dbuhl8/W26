@@ -10,14 +10,14 @@ subroutine soln_getFlux()
 
   if (sim_riemann == 'hll') then
      do i = gr_ibeg, gr_iend+1
-        call hll(gr_vR(:,i-1),&
+        call hll(gr_vR(:,i),&
                  gr_vL(:,i),&
                  gr_flux(:,i))
      enddo
 
   elseif (sim_riemann == 'roe') then
      do i = gr_ibeg, gr_iend+1
-        call roe(gr_vR(:,i-1),&
+        call roe(gr_vR(:,i),&
                  gr_vL(:,i),&
                  gr_flux(:,i))
      enddo
