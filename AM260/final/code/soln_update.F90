@@ -19,7 +19,7 @@ subroutine soln_update(dt)
      
      !! let's update
      gr_U(:,i) = gr_U(:,i) - &
-          dtx*(gr_flux(:,i+1) - gr_flux(:,i))
+          dtx*(gr_flux(:,i) - gr_flux(:,i-i))
   end do
 
 

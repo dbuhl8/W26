@@ -24,7 +24,7 @@ subroutine soln_PLM(dt)
 
   
   ! we need conservative eigenvectors
-  conservative = .false.
+  conservative = .true.
 
   do i = gr_ibeg-1, gr_iend+1
 

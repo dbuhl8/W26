@@ -5,7 +5,7 @@
 sim_name 'rfw_plm_minmod_hll'
 sim_cfl 0.8 
 sim_tmax 0.15
-sim_nStep 10
+sim_nStep 20
 sim_riemann 'hll'
 sim_limiter 'minmod'
 sim_charLimiting .true.

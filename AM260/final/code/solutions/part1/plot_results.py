@@ -1,22 +1,23 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-pdir = '../../part1_'
+pdir = '../../slug_scripts/part1_'
 gpre = '/grid_sod_'
 ppre = '/slug_sod_'
 ppath = ['fog', 'plm', 'ppm']
 gsuf = '.dat'
 psuf = '_tot.dat'
-fn_grid = [pdir+x+gpre+x+psuf for x in ppath]
+fn_grid = [pdir+x+gpre+x+gsuf for x in ppath]
 fn_slug = [pdir+x+ppre+x+psuf for x in ppath]
 sbplt_title = ['FOG', 'PLM', 'PPM']
 #fn_grid = ['grid_rfw_plm_minmod_hll.dat', 'grid_rfw_plm_minmod_roe.dat']
 #fn_slug = ['slug_rfw_plm_minmod_hll_tot.dat', 'slug_rfw_plm_minmod_roe_tot.dat']
 #sbplt_title = ['PLM + Minmod + Hll', 'PLM + Minmod + ROE']
 
-fig, ax = plt.subplots()
+nr = len(fn_grid)
 
-for i in range(len(fn_grid)):
+fig, ax = plt.subplots(nrows=nr,ncols=1)
+for i in range(nr):
     file = open(fn_grid[i],'r')
     nt, nx, xstart, xstop = [float(x) for x in file.readline().split()]
     nt = int(nt)
@@ -40,27 +41,33 @@ for i in range(len(fn_grid)):
     xidx = 0
 
     for line in file:
-        tval, xval, d, v, p, c, e, ei = [float(x) for x in line.split()]
-        if not tval in t: 
-            if tstop in t:
-                break
-            tidx += 1
-            t[tidx] = tval
-        xidx = np.argmax(x>=xval)
-        dens[tidx,xidx] = d
-        vel[tidx,xidx] = v
-        pres[tidx,xidx] = p
-        gamc[tidx,xidx] = c
-        game[tidx,xidx] = e
-        eint[tidx,xidx] = ei
+        try: 
+            tval, xval, d, v, p, c, e, ei = [float(x) for x in line.split()]
+            if not tval in t: 
+                if tstop in t:
+                    break
+                tidx += 1
+                t[tidx] = tval
+            xidx = np.argmax(x>=xval)
+            dens[tidx,xidx] = d
+            vel[tidx,xidx] = v
+            pres[tidx,xidx] = p
+            gamc[tidx,xidx] = c
+            game[tidx,xidx] = e
+            eint[tidx,xidx] = ei
+        except: 
+            print("Bad line in file: ", fn_slug[i])
 
     print('Finished reading file: ',fn_slug[i])
 
     tidx = np.argmax(t == tstop) - 1
     #print(t)
     #print(tidx)
-    ax.plot(x, dens[tidx,:], 'ro-', x, vel[tidx,:], 'go-', x, pres[tidx,:], 'bo-')
-    ax.set_title(sbplt_title[i])
+    ax[i].plot(x, dens[tidx,:], 'r-', x, vel[tidx,:], 'g-', x, pres[tidx,:], 'b--')
+    ax[i].legend([r'$\rho$',r'$u$',r'$p$'])
+    ax[i].set_xlim([0,1])
+    ax[i].set_ylim([-0.5,1.5])
+    ax[i].set_title(sbplt_title[i])
 
 plt.savefig('part1_sol.png',dpi=800)
 

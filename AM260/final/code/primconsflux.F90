@@ -17,10 +17,7 @@ contains
 
     U(DENS_VAR) = V(DENS_VAR)
     U(MOMX_VAR) = V(DENS_VAR)*V(VELX_VAR)
-    ekin = 0.5*V(DENS_VAR)*V(VELX_VAR)**2
-    eint = V(PRES_VAR)/(V(GAME_VAR)-1.)
-    U(ENER_VAR) = ekin + eint
-    
+    U(ENER_VAR) = 0.5*V(DENS_VAR)*V(VELX_VAR)**2 + V(PRES_VAR)/(V(GAME_VAR)-1.)
   end subroutine prim2cons
 
 
@@ -51,10 +48,8 @@ contains
     real :: ekin,eint,ener
     
     Flux(DENS_VAR) = V(DENS_VAR)*V(VELX_VAR)
-    Flux(MOMX_VAR) = Flux(DENS_VAR)*V(VELX_VAR)**2 + V(PRES_VAR)
-    ekin = 0.5*V(DENS_VAR)*V(VELX_VAR)**2
-    eint = V(PRES_VAR)/(V(GAME_VAR)-1.)
-    ener = ekin + eint
+    Flux(MOMX_VAR) = Flux(DENS_VAR)*V(VELX_VAR) + V(PRES_VAR)
+    ener = 0.5*V(DENS_VAR)*V(VELX_VAR)**2 + V(PRES_VAR)/(V(GAME_VAR)-1.)
     Flux(ENER_VAR) = V(VELX_VAR)*(ener + V(PRES_VAR))
     
   end subroutine prim2flux
@@ -68,7 +63,7 @@ contains
     
     Flux(DENS_VAR) = U(MOMX_VAR)
     velx = U(MOMX_VAR)/U(DENS_VAR)
-    ekin = 0.5*U(DENS_VAR)*velx**2
+    ekin = 0.5*U(MOMX_VAR)*velx
     eint = max(U(ENER_VAR) - ekin, sim_smallPres)/U(DENS_VAR) !eint=rho*e
     ! get pressure by calling eos
     call eos_cell(U(DENS_VAR),eint,sim_gamma,pres)
