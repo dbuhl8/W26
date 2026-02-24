@@ -17,7 +17,6 @@ contains
 
     U(DENS_VAR) = V(DENS_VAR)
     U(MOMX_VAR) = V(DENS_VAR)*V(VELX_VAR)
-
     ekin = 0.5*V(DENS_VAR)*V(VELX_VAR)**2
     eint = V(PRES_VAR)/(V(GAME_VAR)-1.)
     U(ENER_VAR) = ekin + eint

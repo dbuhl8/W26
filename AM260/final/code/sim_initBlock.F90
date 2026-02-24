@@ -17,9 +17,10 @@ subroutine sim_initBlock()
   end do
 
   if (secondLoc) then 
+    print *, "Initializing with second loc"
     do i = gr_i0,gr_imax
        xc = gr_XCoord(i)
-       if (gr_xCoord(i) <= sim_shockLoc) then
+       if (xc <= sim_shockLoc) then
           gr_V(DENS_VAR,i) = sim_densL
           gr_V(VELX_VAR,i) = sim_velxL
           gr_V(PRES_VAR,i) = sim_presL
@@ -38,6 +39,7 @@ subroutine sim_initBlock()
        gr_V(EINT_VAR,i) = gr_V(PRES_VAR,i)/(gr_V(GAME_VAR,i)-1.)/gr_V(DENS_VAR,i)
     end do
   else if (sim_bcType .eq. 'user') then
+    print *, "Initializing for shu osher"
      do i = gr_i0,gr_imax
        if (gr_xCoord(i) <= sim_shockLoc) then
           gr_V(DENS_VAR,i) = sim_densL
@@ -53,6 +55,7 @@ subroutine sim_initBlock()
        gr_V(EINT_VAR,i) = gr_V(PRES_VAR,i)/(gr_V(GAME_VAR,i)-1.)/gr_V(DENS_VAR,i)
     end do
   else 
+    print *, "Initializing for 1 location"
      do i = gr_i0,gr_imax
        if (gr_xCoord(i) <= sim_shockLoc) then
           gr_V(DENS_VAR,i) = sim_densL
@@ -66,13 +69,14 @@ subroutine sim_initBlock()
 
        gr_V(GAMC_VAR,i) = sim_gamma
        gr_V(GAME_VAR,i) = sim_gamma
-       gr_V(EINT_VAR,i) = gr_V(PRES_VAR,i)/(gr_V(GAME_VAR,i)-1.)/gr_V(DENS_VAR,i)
+       gr_V(EINT_VAR,i) = gr_V(PRES_VAR,i)/&
+         ((gr_V(GAME_VAR,i)-1.)*gr_V(DENS_VAR,i))
     end do
   end if
 
   ! also initialize conservative vars
   do i = gr_i0,gr_imax
-     call prim2cons(gr_V(:,i), gr_U(DENS_VAR:ENER_VAR,i))
+     call prim2cons(gr_V(:,i), gr_U(:,i))
   end do
 
   

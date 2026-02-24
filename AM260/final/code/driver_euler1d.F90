@@ -51,14 +51,12 @@ program driver_euler1d
      
      call soln_ReconEvolveAvg(dt)
      call soln_update(dt)
-
-
-     ! call BC on primitive vars
      call bc_apply()
 
-     ! call eos to make sure all through GC regions
-     ! call eos_all !! Let's not call this here as it messes up bc
-     
+     ! updates current time
+     t = t + dt
+     nStep = nStep + 1
+
      ! write outputs every ioNfreq cycle or ioTfreq cycle
      
      ioCheckTime = sim_ioTfreq*real(ioTimeFreqCounter+1)
@@ -88,8 +86,6 @@ program driver_euler1d
      endif
      
      ! update your time and step count
-     t = t + dt
-     nStep = nStep + 1
 
      write(*,900)nstep,t,dt
   enddo

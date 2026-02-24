@@ -31,9 +31,12 @@ subroutine sim_init()
   call read_initFileReal('slug.init','sim_gamma',    sim_gamma)
   call read_initFileReal('slug.init','so_alpha' ,    so_alpha)
   call read_initFileReal('slug.init','so_freq'  ,    so_freq)
-  call read_initFileReal('slug.init','sim_shockLoc', sim_shockLoc)
+  call read_initFileReal('slug.init','sim_shockLoc1', sim_shockLoc)
   call read_initFileReal('slug.init','sim_shockLoc2', sim_shockLoc2)
   call read_initFileReal('slug.init','sim_smallPres', sim_smallPres)
+
+  print *, "Shock Loc", sim_shockLoc
+  print *, "Shock Loc2", sim_shockLoc2
 
   call read_initFileChar('slug.init','sim_bcType',sim_bcType)
 
