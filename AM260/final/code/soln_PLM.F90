@@ -13,19 +13,22 @@ subroutine soln_PLM(dt)
   real, dimension(NUMB_WAVE) :: lambda
   real, dimension(NSYS_VAR,NUMB_WAVE) :: reig, leig
   logical :: conservative
-  real, dimension(NSYS_VAR) :: vecL,vecR,sigL,sigR
-  integer :: kWaveNum, k
+  real, dimension(NSYS_VAR) :: sigL,sigR
+  integer :: kWaveNum, k, pidx1, pidx2
   real :: lambdaDtDx, ldL, ldR
   real, dimension(NUMB_VAR)  :: delV,delL,delR
   real, dimension(NUMB_WAVE) :: delW
   integer :: nVar
 
-
+  pidx1 = gr_ibeg + gr_nx/2 -1
+  pidx2 = gr_ibeg + gr_nx/2
 
   ! we need conservative eigenvectors
   conservative = .true.
 
   do i = gr_ibeg-1, gr_iend+1
+
+
 
     call eigenvalues(gr_V(DENS_VAR:GAME_VAR,i),lambda)
     call left_eigenvectors (gr_V(DENS_VAR:GAME_VAR,i),conservative,leig)
@@ -45,7 +48,7 @@ subroutine soln_PLM(dt)
         endif
       enddo
       do k = 1, NUMB_WAVE
-        delW(k) = dot_product(leig(1:3,k),delV(:))
+        delW(k) = dot_product(leig(1:3,k),delV(1:3))
       enddo
     elseif (sim_charLimiting) then
       !stop
@@ -68,17 +71,15 @@ subroutine soln_PLM(dt)
     endif
 
     ! set the initial sum to be zero
-    sigL(DENS_VAR:ENER_VAR) = 0.
-    sigR(DENS_VAR:ENER_VAR) = 0.
-    vecL(DENS_VAR:ENER_VAR) = 0.
-    vecR(DENS_VAR:ENER_VAR) = 0.
+    sigL(1:3) = 0.
+    sigR(1:3) = 0.
 
     do k = 1, NUMB_WAVE
       lambdaDtDx = lambda(k)*dt/gr_dx
       if (sim_riemann == 'roe') then
         if (lambdaDtDx .gt. 0) then
           sigR(1:3) = sigR(1:3) + 0.5*(1.0 - lambdaDtDx)*reig(1:3,k)*delW(k)
-        elseif (lambdaDtDx .lt. 0) then 
+        else
           sigL(1:3) = sigL(1:3) + 0.5*(-1.0 - lambdaDtDx)*reig(1:3,k)*delW(k)
         end if
       elseif (sim_riemann == 'hll') then
@@ -93,6 +94,28 @@ subroutine soln_PLM(dt)
     gr_vR(4:6,i) = gr_V(4:6,i)
     gr_vL(3,i) = max(gr_vL(3,i), sim_smallpres)
     gr_vR(3,i) = max(gr_vR(3,i), sim_smallpres)
+    !gr_vL(1,i) = max(gr_vL(1,i), sim_smallpres)
+    !gr_vR(1,i) = max(gr_vR(1,i), sim_smallpres)
+    !if (i .eq. pidx1) then
+      !print '(A, F8.3)', 'x: ', gr_xCoord(i)
+      !print '(A, 3(F8.3, "    "))', 'dw     :', delW(:)
+      !print '(A, 3(F8.3, "    "))', 'lambda :', lambda(:)
+      !print '(A, 3(F8.3, "    "))', 'vL     :', gr_vL(1:3,i)
+      !print '(A, 3(F8.3, "    "))', 'vR     :', gr_vR(1:3,i)
+      !print '(A, 3(F8.3, "    "))', 'v      :', gr_V(1:3,i)
+      !print '(A, 3(F8.3, "    "))', 'sigL   :', sigL(1:3)
+      !print '(A, 3(F8.3, "    "))', 'sigR   :', sigR(1:3)
+    !elseif (i .eq. pidx2) then
+      !print '(A, F8.3)', 'x: ', gr_xCoord(i)
+      !print '(A, 3(F8.3, "    "))', 'dw     :', delW(:)
+      !print '(A, 3(F8.3, "    "))', 'lambda :', lambda(:)
+      !print '(A, 3(F8.3, "    "))', 'vL     :', gr_vL(1:3,i)
+      !print '(A, 3(F8.3, "    "))', 'vR     :', gr_vR(1:3,i)
+      !print '(A, 3(F8.3, "    "))', 'v      :', gr_V(1:3,i)
+      !print '(A, 3(F8.3, "    "))', 'sigL   :', sigL(1:3)
+      !print '(A, 3(F8.3, "    "))', 'sigR   :', sigR(1:3)
+    !end if
+
   end do
 
   return

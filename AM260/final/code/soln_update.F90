@@ -27,6 +27,7 @@ subroutine soln_update(dt)
   !print *, '________    ________    ________    ________'
   !print '(4(F8.3, "    "))', gr_xCoord(pidx1), gr_flux(:,pidx1)
   !print '(4(F8.3, "    "))', gr_xCoord(pidx2), gr_flux(:,pidx2)
+  !print '(4(F8.3, "    "))', gr_xCoord(pidx1-1), gr_vR(1:3,pidx1-1)
 
   do i = gr_ibeg, gr_iend
     ! Eos is automatically called inside cons2prim
