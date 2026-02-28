@@ -17,7 +17,7 @@ subroutine cfl(dt)
     ! this needs to be changes to include all wave speeds (pressure, dens,
     ! and velx)
      cs = sqrt(gr_V(GAME_VAR,i)*gr_V(PRES_VAR,i)/gr_V(DENS_VAR,i))
-     lambda=(maxval(abs(gr_V(VELX_VAR,i))) + cs)
+     lambda = abs(gr_V(VELX_VAR,i)) + cs
      maxSpeed=max(maxSpeed,lambda)
   end do
 

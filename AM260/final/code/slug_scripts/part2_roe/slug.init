@@ -5,10 +5,10 @@
 sim_name 'rfw_plm_minmod_roe'
 sim_cfl 0.8 
 sim_tmax 0.15
-sim_nStep 100000
+sim_nStep 1000
 sim_riemann 'roe'
 sim_limiter 'minmod'
-sim_charLimiting .false.
+sim_charLimiting .true.
 sim_order 2
 
 # grid variables
@@ -18,7 +18,7 @@ gr_xbeg 0.0
 gr_xend 1.0
 
 # problem specific physical IC
-sim_shockLoc 0.5
+sim_shockLoc1 0.5
 sim_densL 1.0
 sim_velxL -2.0
 sim_presL 0.4 

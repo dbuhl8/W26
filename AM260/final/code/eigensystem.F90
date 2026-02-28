@@ -3,6 +3,7 @@ module eigensystem
 #include "definition.h"
   
   use grid_data
+  use sim_data, ONLY: sim_smallpres
 
 contains
 
@@ -15,7 +16,7 @@ contains
     real :: a, u
 
     ! sound speed
-    a = sqrt(V(GAMC_VAR)*V(PRES_VAR)/V(DENS_VAR))
+    a = sqrt(V(GAMC_VAR)*max(V(PRES_VAR),sim_smallpres)/V(DENS_VAR))
     u = V(VELX_VAR)
     
     lambda(SHOCKLEFT) = u - a
@@ -37,7 +38,7 @@ contains
     
     ! sound speed, and others
     u = V(VELX_VAR)
-    pres = V(PRES_VAR)
+    pres = max(V(PRES_VAR),sim_smallpres)
     rho = V(DENS_VAR)
     gam = V(GAMC_VAR)
     cs = sqrt(gam*pres/rho)
@@ -92,7 +93,7 @@ contains
     
     ! sound speed, and others
     u = V(VELX_VAR)
-    pres = V(PRES_VAR)
+    pres = max(V(PRES_VAR),sim_smallpres)
     rho = V(DENS_VAR)
     gam = V(GAMC_VAR)
     cs = sqrt(gam*pres/rho)
@@ -114,7 +115,7 @@ contains
        leig(DENS_VAR,SHOCKRGHT) = ke - cs*u/(gam-1)
        leig(VELX_VAR,SHOCKRGHT) = -u + cs/(gam-1) 
        leig(PRES_VAR,SHOCKRGHT) = 1.
-       !leig(:,:) = ((gam-1)/(rho*cs))*leig(:,:)
+       leig(:,:) = ((gam-1)/(rho*cs))*leig(:,:)
        
     else
        !! Primitive eigenvector

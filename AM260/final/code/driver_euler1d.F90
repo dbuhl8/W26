@@ -49,9 +49,9 @@ program driver_euler1d
         dt = sim_tmax - t
      endif
      
+     call bc_apply()
      call soln_ReconEvolveAvg(dt)
      call soln_update(dt)
-     call bc_apply()
 
      ! updates current time
      t = t + dt

@@ -1,4 +1,4 @@
-subroutine roe(vR,vL,Flux)
+subroutine roe(vL,vR,Flux)
 
 #include "definition.h"  
 
