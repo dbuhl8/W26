@@ -38,4 +38,4 @@ sim_bcType 'outflow'
 
 # IO frequency
 sim_ioTfreq 0.01 #real
-sim_ioNfreq 10    #positive integer; zero or negative if not used
+sim_ioNfreq 1    #positive integer; zero or negative if not used

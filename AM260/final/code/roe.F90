@@ -1,4 +1,5 @@
 subroutine roe(vL,vR,Flux)
+!subroutine roe(vL,vR,Flux,pt)
 
 #include "definition.h"  
 
@@ -16,7 +17,8 @@ subroutine roe(vL,vR,Flux)
   real, dimension(NSYS_VAR,NUMB_WAVE) :: reig, leig
   logical :: conservative
   real, dimension(NSYS_VAR) :: vec, sigma
-  integer :: kWaveNum
+  integer :: k, pidx1, pidx2
+  !logical, intent(in) :: pt
   
   ! set the initial sum to be zero
   sigma = 0.
@@ -24,7 +26,8 @@ subroutine roe(vL,vR,Flux)
   
   ! we need conservative eigenvectors
   conservative = .true.
-  
+
+
   call averageState(vL,vR,vAvg)
   call eigenvalues(vAvg,lambda)
   call left_eigenvectors (vAvg,conservative,leig)
@@ -35,13 +38,24 @@ subroutine roe(vL,vR,Flux)
   call prim2cons(vL,uL)
   call prim2cons(vR,uR)
 
+  !if (pt) then
+    !print '(A, 3(F8.3, "    "))', 'VL     :', vL(1:3)
+    !print '(A, 3(F8.3, "    "))', 'VR     :', vR(1:3)
+    !print '(A, 3(F8.3, "    "))', 'UL     :', uL(1:3)
+    !print '(A, 3(F8.3, "    "))', 'UR     :', uR(1:3)
+    !print '(A, 3(F8.3, "    "))', 'FL     :', FL(1:3)
+    !print '(A, 3(F8.3, "    "))', 'FR     :', FR(1:3)
+  !end if
 
-  do kWaveNum = 1, NUMB_WAVE
+
+
+  do k = 1, NUMB_WAVE
      ! STUDENTS: PLEASE FINISH THIS ROE SOLVER
      !stop
-    sigma = sigma + dot_product(leig(:,kWaveNum),uR-uL)*abs(lambda(kWaveNum))&
-      *reig(:,kWaveNum)
+    sigma = sigma + dot_product(leig(:,k),uR-uL)*abs(lambda(k))*reig(:,k)
+
   end do
+
   
   ! numerical flux
   Flux = 0.5*(FL + FR) - 0.5*sigma

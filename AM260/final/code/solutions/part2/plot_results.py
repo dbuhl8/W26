@@ -63,14 +63,14 @@ for i in range(nr):
 
     print('Finished reading file: ',fn_slug[i])
 
-    #tidx = np.argmax(t == tstop) - 1
-    tidx = 1
+    tidx = np.argmax(t == tstop) - 1
+    #tidx = 1
     ax[i].plot(x, dens[tidx,:], 'r-',\
                x,  vel[tidx,:], 'g-',\
                x, pres[tidx,:], 'b--')
     ax[i].legend(labels=[r'$\rho$',r'$u$',r'$p$'])
     ax[i].set_xlim([0,1])
-    #ax[i].set_ylim([-3,3])
+    ax[i].set_ylim([-3,3])
 
     ax[i].set_title(sbplt_title[i])
 
