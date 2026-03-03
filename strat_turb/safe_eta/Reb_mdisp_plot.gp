@@ -12,7 +12,7 @@ if (png_output){
     set output "plot_mdisp.png"
 } else if (eps_output) {
     set terminal postscript enh col
-    set output "mdisp_vturb_plot.eps"
+    set output "Fr_mdisp_plot.eps"
 }
 set tics font "Roman,22"
 set title font "Roman,35"
@@ -97,22 +97,28 @@ set multiplot layout 3,1 columnsfirst
 
 # -------------------------------------------------------------
 
-perform_block_1 = 0
+perform_block_1 = 1
 
 # {{{ First Plot
 
 if (perform_block_1) {
 
-set xlabel "Re_{B, eff}"
+set xlabel "Fr^{-1}_eff"
 set key top right
 set ylabel "MDisp"
 set title "Effective MDisp v Re_{B}"
 set log x
 
 plot "steady_tavg_eta.dat" \
-   i idx u (($8**3)*$1/$2):($16/($1*$8**pwr)):($17/($1*$8**pwr)) w yerrorbars pt 4 ps 2 lc rgb "dark-violet" title 'Steady MDisp',\
+   i 0 u ($8*($2**0.5)):16:17 w yerrorbars pt 4 ps 2 lc rgb "black" title 'Steady MDisp',\
+"" i 1 u ($8*($2**0.5)):16:17 w yerrorbars pt 4 ps 2 lc rgb "blue" title 'Steady MDisp',\
+"" i 2 u ($8*($2**0.5)):16:17 w yerrorbars pt 4 ps 2 lc rgb "red" title 'Steady MDisp',\
+"" i 3 u ($8*($2**0.5)):16:17 w yerrorbars pt 4 ps 2 lc rgb "dark-violet" title 'Steady MDisp',\
+"" i 4 u ($8*($2**0.5)):16:17 w yerrorbars pt 4 ps 2 lc rgb "forest-green" title 'Steady MDisp',\
 "stoch_tavg_eta.dat" \
-   i idx u (($8**3)*$1/$2):($16/($1*$8**pwr)):($17/($1*$8**pwr)) w yerrorbars pt 9 ps 2 lc rgb "dark-violet" title 'Stoch. MDisp',\
+   i 0 u ($8*($2**0.5)):16:17 w yerrorbars pt 9 ps 2 lc rgb "black" title 'Steady MDisp',\
+"" i 1 u ($8*($2**0.5)):16:17 w yerrorbars pt 9 ps 2 lc rgb "red" title 'Steady MDisp',\
+"" i 2 u ($8*($2**0.5)):16:17 w yerrorbars pt 9 ps 2 lc rgb "forest-green" title 'Steady MDisp',\
 
 } # end of block 1 }}}
 
@@ -189,7 +195,7 @@ plot "steady_tavg_eta.dat" \
 
 # -------------------------------------------------------------
 
-perform_block_5 = 1
+perform_block_5 = 0
 
 # {{{ Fifth Plot
 
