@@ -1,5 +1,5 @@
-subroutine roe(vL,vR,Flux)
-!subroutine roe(vL,vR,Flux,pt)
+!subroutine roe(vL,vR,Flux)
+subroutine roe(vL,vR,Flux,pt)
 
 #include "definition.h"  
 
@@ -18,7 +18,7 @@ subroutine roe(vL,vR,Flux)
   logical :: conservative
   real, dimension(NSYS_VAR) :: vec, sigma
   integer :: k, pidx1, pidx2
-  !logical, intent(in) :: pt
+  logical, intent(in) :: pt
   
   ! set the initial sum to be zero
   sigma = 0.
@@ -38,14 +38,14 @@ subroutine roe(vL,vR,Flux)
   call prim2cons(vL,uL)
   call prim2cons(vR,uR)
 
-  !if (pt) then
-    !print '(A, 3(F8.3, "    "))', 'VL     :', vL(1:3)
-    !print '(A, 3(F8.3, "    "))', 'VR     :', vR(1:3)
-    !print '(A, 3(F8.3, "    "))', 'UL     :', uL(1:3)
-    !print '(A, 3(F8.3, "    "))', 'UR     :', uR(1:3)
-    !print '(A, 3(F8.3, "    "))', 'FL     :', FL(1:3)
-    !print '(A, 3(F8.3, "    "))', 'FR     :', FR(1:3)
-  !end if
+  if (pt) then
+    print '(A, 3(F8.3, "    "))', 'VL     :', vL(1:3)
+    print '(A, 3(F8.3, "    "))', 'VR     :', vR(1:3)
+    print '(A, 3(F8.3, "    "))', 'UL     :', uL(1:3)
+    print '(A, 3(F8.3, "    "))', 'UR     :', uR(1:3)
+    print '(A, 3(F8.3, "    "))', 'FL     :', FL(1:3)
+    print '(A, 3(F8.3, "    "))', 'FR     :', FR(1:3)
+  end if
 
 
 

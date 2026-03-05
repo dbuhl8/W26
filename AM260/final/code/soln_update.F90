@@ -15,9 +15,9 @@ subroutine soln_update(dt)
   pidx2 = gr_ibeg + gr_nx/4 + 2
   pidx3 = gr_ibeg + gr_nx/4 - 1
   pidx4 = gr_ibeg + gr_nx/4 - 2
-  print *, 'dtx: ', dtx
-  print *, '   x           rho          m           E   '
-  print *, '________    ________    ________    ________'
+  !print *, 'dtx: ', dtx
+  !print *, '   x           rho          m           E   '
+  !print *, '________    ________    ________    ________'
   !print '(4(F8.3, "    "))', gr_xCoord(pidx1), gr_U(:,pidx1)
   !print '(4(F8.3, "    "))', gr_xCoord(pidx2), gr_flux(:,pidx2)
   !print '(4(F8.3, "    "))', gr_xCoord(pidx3), gr_flux(:,pidx3)
@@ -34,14 +34,14 @@ subroutine soln_update(dt)
     ! convert prim to vars
     call prim2cons(gr_V(:,i),gr_U(:,i))
 
-    if (abs(gr_ibeg + gr_nx/4 - i) .le. 2) then
-      print '(4(F8.3, "    "))', gr_xCoord(i), gr_U(:,i)
-    end if
+    !if (abs(gr_ibeg + gr_nx/4 - i) .le. 2) then
+      !print '(4(F8.3, "    "))', gr_xCoord(i), gr_U(:,i)
+    !end if
   
     ! forward euler 
     gr_U(:,i) = gr_U(:,i) - dtx*(gr_flux(:,i) - gr_flux(:,i-1))
   end do
-  print *, 'after update'
+  !print *, 'after update'
 
   !print *, '   x          rho        rhoU       rhoE +p '
   !print *, '________    ________    ________    ________'
@@ -49,21 +49,21 @@ subroutine soln_update(dt)
 
   do i = gr_ibeg, gr_iend
     ! Eos is automatically called inside cons2prim
-    if (abs(gr_ibeg + gr_nx/4 - i) .le. 2) then
-      print '(4(F8.3, "    "))', gr_xCoord(i), gr_U(:,i)
-    end if
+    !if (abs(gr_ibeg + gr_nx/4 - i) .le. 2) then
+      !print '(4(F8.3, "    "))', gr_xCoord(i), gr_U(:,i)
+    !end if
     call cons2prim(gr_U(:,i),gr_V(:,i))
   end do
 
-  print *, 'after cons2prim'
-  print *, '   x           rho          u           p   '
-  print *, '________    ________    ________    ________'
+  !print *, 'after cons2prim'
+  !print *, '   x           rho          u           p   '
+  !print *, '________    ________    ________    ________'
 
-  do i = gr_ibeg, gr_iend
-    if (abs(gr_ibeg + gr_nx/4 - i) .le. 2) then
-      print '(4(F8.3, "    "))', gr_xCoord(i), gr_V(1:3,i)
-    end if
-  end do
+  !do i = gr_ibeg, gr_iend
+    !if (abs(gr_ibeg + gr_nx/4 - i) .le. 2) then
+      !print '(4(F8.3, "    "))', gr_xCoord(i), gr_V(1:3,i)
+    !end if
+  !end do
 
 
 

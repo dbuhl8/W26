@@ -63,8 +63,8 @@ for i in range(nr):
 
     print('Finished reading file: ',fn_slug[i])
 
-    tidx = np.argmax(t == tstop) - 1
-    #tidx = 1
+    #tidx = np.argmax(t == tstop) - 1
+    tidx = 1
     ax[i].plot(x, dens[tidx,:], 'r-',\
                x,  vel[tidx,:], 'g-',\
                x, pres[tidx,:], 'b--')

@@ -24,11 +24,9 @@ subroutine soln_PLM(dt)
   pidx2 = gr_ibeg + gr_nx/2
 
   ! we need conservative eigenvectors
-  conservative = .true.
+  conservative = .false.
 
   do i = gr_ibeg-1, gr_iend+1
-
-
 
     call eigenvalues(gr_V(DENS_VAR:GAME_VAR,i),lambda)
     call left_eigenvectors (gr_V(DENS_VAR:GAME_VAR,i),conservative,leig)
@@ -76,16 +74,16 @@ subroutine soln_PLM(dt)
 
     do k = 1, NUMB_WAVE
       lambdaDtDx = lambda(k)*dt/gr_dx
-      !if (sim_riemann == 'roe') then
-      if (lambdaDtDx .gt. 0) then
+      if (sim_riemann == 'roe') then
+        if (lambdaDtDx .gt. 0) then
+          sigR(1:3) = sigR(1:3) + 0.5*(1.0 - lambdaDtDx)*reig(1:3,k)*delW(k)
+        else
+          sigL(1:3) = sigL(1:3) + 0.5*(-1.0 - lambdaDtDx)*reig(1:3,k)*delW(k)
+        end if
+      elseif (sim_riemann == 'hll') then
         sigR(1:3) = sigR(1:3) + 0.5*(1.0 - lambdaDtDx)*reig(1:3,k)*delW(k)
-      else
         sigL(1:3) = sigL(1:3) + 0.5*(-1.0 - lambdaDtDx)*reig(1:3,k)*delW(k)
-      end if
-      !elseif (sim_riemann == 'hll') then
-        !sigR(1:3) = sigR(1:3) + 0.5*(1.0 - lambdaDtDx)*reig(1:3,k)*delW(k)
-        !sigL(1:3) = sigL(1:3) + 0.5*(-1.0 - lambdaDtDx)*reig(1:3,k)*delW(k)
-      !endif
+      endif
     end do
     ! Now PLM reconstruction for dens, velx, and pres
     gr_vL(1:3,i) = gr_V(1:3,i) + sigL(1:3)

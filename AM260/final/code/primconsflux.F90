@@ -27,8 +27,7 @@ contains
     real, dimension(NUMB_VAR), intent(OUT) :: V
     real :: eint, ekin, pres
     
-    !V(DENS_VAR) = max(U(DENS_VAR),sim_smallpres)
-    V(DENS_VAR) = U(DENS_VAR)
+    V(DENS_VAR) = max(U(DENS_VAR),sim_smallpres)
     V(VELX_VAR) = U(MOMX_VAR)/V(DENS_VAR)
     ekin = 0.5*V(DENS_VAR)*V(VELX_VAR)**2
     eint = max(U(ENER_VAR) - ekin, sim_smallPres)/V(DENS_VAR) !eint=rho*e
