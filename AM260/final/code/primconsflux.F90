@@ -33,7 +33,7 @@ contains
     eint = max(U(ENER_VAR) - ekin, sim_smallPres)/V(DENS_VAR) !eint=rho*e
     V(EINT_VAR) = eint
     ! get pressure by calling eos
-    call eos_cell(U(DENS_VAR),eint,sim_gamma,pres)
+    call eos_cell(V(DENS_VAR),eint,sim_gamma,pres)
     V(PRES_VAR) = pres
     V(GAMC_VAR) = sim_gamma
     V(GAME_VAR) = sim_gamma

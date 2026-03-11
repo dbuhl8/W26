@@ -38,27 +38,27 @@ subroutine roe(vL,vR,Flux,pt)
   call prim2cons(vL,uL)
   call prim2cons(vR,uR)
 
+
+  do k = 1, NUMB_WAVE
+     ! STUDENTS: PLEASE FINISH THIS ROE SOLVER
+     !stop
+    sigma = sigma + dot_product(leig(:,k),uR-uL)*abs(lambda(k))*reig(:,k)
+  end do
+
+  ! numerical flux
+  Flux = 0.5*(FL + FR) - 0.5*sigma
+
   if (pt) then
+    print '(A, 3(F8.3, "    "))', 'VAVG   :', vAvg(1:3)
     print '(A, 3(F8.3, "    "))', 'VL     :', vL(1:3)
     print '(A, 3(F8.3, "    "))', 'VR     :', vR(1:3)
     print '(A, 3(F8.3, "    "))', 'UL     :', uL(1:3)
     print '(A, 3(F8.3, "    "))', 'UR     :', uR(1:3)
     print '(A, 3(F8.3, "    "))', 'FL     :', FL(1:3)
     print '(A, 3(F8.3, "    "))', 'FR     :', FR(1:3)
+    print '(A, 3(F8.3, "    "))', 'Flux   :', Flux(1:3)
   end if
 
-
-
-  do k = 1, NUMB_WAVE
-     ! STUDENTS: PLEASE FINISH THIS ROE SOLVER
-     !stop
-    sigma = sigma + dot_product(leig(:,k),uR-uL)*abs(lambda(k))*reig(:,k)
-
-  end do
-
-  
-  ! numerical flux
-  Flux = 0.5*(FL + FR) - 0.5*sigma
 
 
   return

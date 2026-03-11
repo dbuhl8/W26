@@ -33,7 +33,7 @@ subroutine soln_getFlux()
         !call roe(gr_vR(:,i),&
                  !gr_vL(:,i+1),&
                  !gr_flux(:,i))
-        if (i .eq. gr_ibeg + gr_nx/2 -1) then
+        if (abs(i - gr_ibeg - gr_nx/2) .le. 2) then
           print *, "X = ", gr_xCoord(i)
           call roe(gr_vR(:,i),&
                  gr_vL(:,i+1),&
